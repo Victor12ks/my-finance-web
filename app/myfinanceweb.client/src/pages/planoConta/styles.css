@@ -1,0 +1,16 @@
+.even-row {
+    background-color: #f0f0f0; /* Background color for even rows */
+    cursor: not-allowed;
+  }
+  
+  .odd-row {
+    background-color: #ffffff; /* Background color for odd rows */
+  }
+  
+  .ant-table-row:hover {
+    background-color: #e6f7ff; /* Hover color for rows */
+  }
+  
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #f0f0f0; /* Horizontal line between rows */
+  }
