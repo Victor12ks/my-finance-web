@@ -1,16 +1,21 @@
-// src/PlanoConta.tsx
 import React, { useEffect, useState } from "react";
 import { Button, Skeleton, Table, Tag, Flex } from "antd";
-import axios from "axios";
 import { PlanoContaModel } from "../../types/planoConta";
 import { ColumnsType } from "antd/es/table";
 import "./styles.css";
 import EditModal from "./EditModal";
-import { getPlanosConta, createPlanoConta } from "../../api/planoContaApi";
+import {
+  getPlanosConta,
+  createPlanoConta,
+  disableEnablePlanoConta,
+  updatePlanoConta,
+} from "../../api/planoContaApi";
+import { EModalAction } from "../../types/utils";
 
 const PlanoConta: React.FC = () => {
   const [data, setData] = useState<PlanoContaModel[]>([]);
   const [loading, setLoading] = useState(true);
+  const [modalAction, setModalAction] = useState<EModalAction>();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingRecord, setEditingRecord] = useState<PlanoContaModel | null>(
@@ -18,10 +23,10 @@ const PlanoConta: React.FC = () => {
   );
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchPlanosConta = async () => {
       try {
-        const products = await getPlanosConta();
-        if (products && products.data) setData(products.data);
+        const PlanosConta = await getPlanosConta();
+        if (PlanosConta && PlanosConta.data) setData(PlanosConta.data);
       } catch (error) {
         // setError(error.message);
       } finally {
@@ -29,13 +34,31 @@ const PlanoConta: React.FC = () => {
       }
     };
 
-    fetchProducts();
+    fetchPlanosConta();
   }, []);
 
-  const handleCreateProduct = async (planoConta: PlanoContaModel) => {
+  const handleCreatePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const createdProduct = await createPlanoConta(planoConta);
-      console.log("Product created successfully:", createdProduct);
+      const createdPlanoConta = await createPlanoConta(planoConta);
+      console.log("PlanoConta created successfully:", createdPlanoConta);
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+  };
+
+  const handleUpdatePlanoConta = async (planoConta: PlanoContaModel) => {
+    try {
+      const createdPlanoConta = await updatePlanoConta(planoConta);
+      console.log("PlanoConta created successfully:", createdPlanoConta);
+    } catch (error) {
+      console.error("Error creating PlanoConta:", error);
+    }
+  };
+
+  const handleDisableEnablePlanoConta = async (planoConta: PlanoContaModel) => {
+    try {
+      const createdPlanoConta = await disableEnablePlanoConta(planoConta);
+      console.log("PlanoConta created successfully:", createdPlanoConta);
     } catch (error) {
       console.error("Error creating product:", error);
     }
@@ -80,7 +103,7 @@ const PlanoConta: React.FC = () => {
           <Button
             disabled={!record.ativo}
             type="primary"
-            onClick={() => handleEdit(record)}
+            onClick={() => handleEdit(record, "Update")}
           >
             Alterar
           </Button>
@@ -88,12 +111,16 @@ const PlanoConta: React.FC = () => {
             <Button
               style={{ backgroundColor: "green", color: "white" }}
               type="primary"
-              onClick={() => handleEdit(record)}
+              onClick={() => handleEdit(record, "Delete")}
             >
               Ativar
             </Button>
           ) : (
-            <Button danger type="primary" onClick={() => handleEdit(record)}>
+            <Button
+              danger
+              type="primary"
+              onClick={() => handleEdit(record, "Delete")}
+            >
               Desativar
             </Button>
           )}
@@ -102,27 +129,35 @@ const PlanoConta: React.FC = () => {
     },
   ];
 
-  const handleEdit = (record: PlanoContaModel) => {
+  const handleEdit = (record: PlanoContaModel, action: EModalAction) => {
+    setModalAction(action);
     setEditingRecord(record);
     setIsModalVisible(true);
   };
 
   const handleAdd = () => {
+    setModalAction("Create");
     setEditingRecord({} as PlanoContaModel);
     setIsModalVisible(true);
   };
 
   const handleCancel = () => {
+    setModalAction(undefined);
     setIsModalVisible(false);
     setEditingRecord(null);
   };
 
-  const handleSave = (updatedRecord: PlanoContaModel) => {
-    if (updatedRecord?.id) console.log("EDITAR");
-    else createPlanoConta(updatedRecord);
+  const handleConfirm = (updatedRecord: PlanoContaModel) => {
+    if(modalAction === "Create")
+      handleCreatePlanoConta(updatedRecord);
+    else if(modalAction === "Update")
+      handleUpdatePlanoConta(updatedRecord);
+    else if(modalAction === "Delete")
+      handleDisableEnablePlanoConta(updatedRecord);
 
     setIsModalVisible(false);
     setEditingRecord(null);
+    setModalAction(undefined);
   };
 
   return (
@@ -134,8 +169,9 @@ const PlanoConta: React.FC = () => {
         <EditModal
           visible={isModalVisible}
           onCancel={handleCancel}
-          onSave={handleSave}
+          onConfirm={handleConfirm}
           initialValues={editingRecord}
+          action={modalAction}
         />
       )}
       {loading ? (

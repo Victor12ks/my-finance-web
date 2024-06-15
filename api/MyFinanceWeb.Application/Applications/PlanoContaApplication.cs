@@ -1,33 +1,26 @@
 ﻿using Microsoft.Extensions.Logging;
 using MyFinanceWeb.Domain.Constants;
 using MyFinanceWeb.Domain.Core;
-using MyFinanceWeb.Domain.Interfaces.Repositories;
+using MyFinanceWeb.Domain.Interfaces.Applications;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
-using MyFinanceWeb.Domain.Utils;
 
-namespace MyFinanceWeb.Application.Services
+namespace MyFinanceWeb.Application.Applications
 {
-
-    public class PlanoContaService : IPlanoContaService
+    public class PlanoContaApplication : IPlanoContaApplication
     {
-        private readonly IPlanoContaRepository _repository;
+        private readonly IPlanoContaService _service;
         private readonly ILogger<PlanoContaModel> _logger;
-        public PlanoContaService(IPlanoContaRepository repository, ILogger<PlanoContaModel> logger)
+        public PlanoContaApplication(IPlanoContaService service, ILogger<PlanoContaModel> logger)
         {
-            _repository = repository;
+            _service = service;
             _logger = logger;
         }
         public Response<PlanoContaModel> Add(PlanoContaModel planoConta)
         {
             try
             {
-                var sucess = _repository.Add(planoConta.CastModalToDto());
-
-                if (sucess)
-                    return new Response<PlanoContaModel>(planoConta);
-
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                return _service.Add(planoConta);
             }
             catch (Exception ex)
             {
@@ -40,15 +33,7 @@ namespace MyFinanceWeb.Application.Services
         {
             try
             {
-                var planosConta = _repository.GetAll();
-
-                if (planosConta is null || planosConta.Count() <= 0)
-                    return new Response<IEnumerable<PlanoContaModel>>(Enumerable.Empty<PlanoContaModel>());
-
-                var result = planosConta.Clone<List<PlanoContaModel>>();
-                result.ForEach(pc => pc.CreateObject());
-
-                return new Response<IEnumerable<PlanoContaModel>>(result);
+                return _service.GetAll();
             }
             catch (Exception ex)
             {
@@ -61,14 +46,7 @@ namespace MyFinanceWeb.Application.Services
         {
             try
             {
-                var planoConta = _repository.GetById(id);
-
-                if (planoConta is null)
-                    return new Response<PlanoContaModel>();
-
-                var result = planoConta.Clone<PlanoContaModel>();
-                result.CreateObject();
-                return new Response<PlanoContaModel>(result);
+                return _service.GetById(id);
             }
             catch (Exception ex)
             {
@@ -81,14 +59,23 @@ namespace MyFinanceWeb.Application.Services
         {
             try
             {
-                var hasPlanoConta = GetById(planoConta.Id)?.Data is not null;
+                return _service.Update(planoConta);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(message: ex.Message);
+                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+            }
+        }
 
-                if (!hasPlanoConta)
-                    return new Response<PlanoContaModel>();
+        public Response<PlanoContaModel> DisableEnable(PlanoContaModel planoConta)
+        {
+            try
+            {
+                planoConta.DisableEnable();
+                var result = Update(planoConta);
 
-                var sucess = _repository.Update(planoConta.CastModalToDto());
-
-                if (sucess)
+                if (result.Success)
                     return new Response<PlanoContaModel>(planoConta);
 
                 return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);

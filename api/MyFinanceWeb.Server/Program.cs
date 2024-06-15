@@ -1,6 +1,8 @@
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using MyFinanceWeb.Application.Applications;
 using MyFinanceWeb.Application.Services;
+using MyFinanceWeb.Domain.Interfaces.Applications;
 using MyFinanceWeb.Domain.Interfaces.Repositories;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Validations;
@@ -20,13 +22,14 @@ builder.Services.AddDbContext<MyFinanceDbContext>(options =>
             maxRetryCount: 5, // Número máximo de tentativas
             maxRetryDelay: TimeSpan.FromSeconds(30), // Atraso máximo entre tentativas
             errorNumbersToAdd: null) // Lista opcional de números de erro adicionais para incluir no comportamento de repetição
-    )
+    ).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
 );
 
 builder.Services.AddControllers()
     .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<PlanoContaValidator>());
 
 builder.Services.AddScoped<IPlanoContaRepository, PlanoContaRepository>();
+builder.Services.AddScoped<IPlanoContaApplication, PlanoContaApplication>();
 builder.Services.AddScoped<IPlanoContaService, PlanoContaService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
