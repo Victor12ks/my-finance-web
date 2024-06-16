@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Skeleton, Table, Tag, Flex } from "antd";
+import { Button, Skeleton, Table, Tag, Flex, notification } from "antd";
 import { PlanoContaModel } from "../../types/planoConta";
 import { ColumnsType } from "antd/es/table";
 import "./styles.css";
@@ -11,6 +11,7 @@ import {
   updatePlanoConta,
 } from "../../api/planoContaApi";
 import { EModalAction } from "../../types/utils";
+import { IconType } from "antd/es/notification/interface";
 
 const PlanoConta: React.FC = () => {
   const [data, setData] = useState<PlanoContaModel[]>([]);
@@ -28,7 +29,7 @@ const PlanoConta: React.FC = () => {
         const PlanosConta = await getPlanosConta();
         if (PlanosConta && PlanosConta.data) setData(PlanosConta.data);
       } catch (error) {
-        // setError(error.message);
+        showErroOperacao();
       } finally {
         setLoading(false);
       }
@@ -39,29 +40,48 @@ const PlanoConta: React.FC = () => {
 
   const handleCreatePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const createdPlanoConta = await createPlanoConta(planoConta);
-      console.log("PlanoConta created successfully:", createdPlanoConta);
+      const result = await createPlanoConta(planoConta);
+      if (result && result.success) showSucessoOperacao();
+      else showErroOperacao();
     } catch (error) {
-      console.error("Error creating product:", error);
+      showErroOperacao();
     }
   };
 
   const handleUpdatePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const createdPlanoConta = await updatePlanoConta(planoConta);
-      console.log("PlanoConta created successfully:", createdPlanoConta);
+      const result = await updatePlanoConta(planoConta);
+      if (result && result.success) showSucessoOperacao();
+      else showErroOperacao();
     } catch (error) {
-      console.error("Error creating PlanoConta:", error);
+      showErroOperacao();
     }
   };
 
   const handleDisableEnablePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const createdPlanoConta = await disableEnablePlanoConta(planoConta);
-      console.log("PlanoConta created successfully:", createdPlanoConta);
+      const result = await disableEnablePlanoConta(planoConta);
+      if (result && result.success) showSucessoOperacao();
+      else showErroOperacao();
     } catch (error) {
-      console.error("Error creating product:", error);
+      showErroOperacao();
     }
+  };
+
+  const showErroOperacao = () => {
+    openNotification(
+      "Ops...",
+      "Ocorreu um erro ao realizar a sua operação.",
+      "error"
+    );
+  };
+
+  const showSucessoOperacao = () => {
+    openNotification(
+      "Legal :)",
+      "Sua operação foi realizada com sucesso.",
+      "success"
+    );
   };
 
   const getRowClassName = (record: PlanoContaModel) => {
@@ -148,20 +168,33 @@ const PlanoConta: React.FC = () => {
   };
 
   const handleConfirm = (updatedRecord: PlanoContaModel) => {
-    if(modalAction === "Create")
-      handleCreatePlanoConta(updatedRecord);
-    else if(modalAction === "Update")
-      handleUpdatePlanoConta(updatedRecord);
-    else if(modalAction === "Delete")
+    if (modalAction === "Create") handleCreatePlanoConta(updatedRecord);
+    else if (modalAction === "Update") handleUpdatePlanoConta(updatedRecord);
+    else if (modalAction === "Delete")
       handleDisableEnablePlanoConta(updatedRecord);
 
     setIsModalVisible(false);
     setEditingRecord(null);
     setModalAction(undefined);
   };
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (
+    title: string,
+    description: string,
+    type: IconType
+  ) => {
+    api.open({
+      message: title,
+      description: description,
+      duration: 3,
+      type: type,
+    });
+  };
 
   return (
     <>
+      {contextHolder}
       <Button type="primary" onClick={handleAdd}>
         Adicionar
       </Button>
