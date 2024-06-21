@@ -7,7 +7,6 @@ namespace MyFinanceWeb.Domain.Interfaces.Services
     {
         Response<IEnumerable<PlanoContaModel>> GetAll();
         Response<PlanoContaModel> GetById(int id);
-        //Response<PlanoContaModel> DisableEnable(PlanoContaModel planoConta);
         Response<PlanoContaModel> Add(PlanoContaModel planoConta);
         Response<PlanoContaModel> Update(PlanoContaModel planoConta);
     }

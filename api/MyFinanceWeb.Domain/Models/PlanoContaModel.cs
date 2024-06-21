@@ -7,15 +7,14 @@ namespace MyFinanceWeb.Domain.Models
     {
         public PlanoContaModel()
         {
-         
+
         }
 
-        public PlanoContaModel(PlanoContaDto planoConta)
+        public PlanoContaModel(PlanoConta planoConta)
         {
             Ativo = planoConta.Ativo;
             Descricao = planoConta.Descricao;
             Id = planoConta.Id;
-            //SetTipo(Tipo.ToString());
         }
 
         public int Id { get; set; }
@@ -24,19 +23,16 @@ namespace MyFinanceWeb.Domain.Models
         public string Tipo { get; set; }
         public string? CorTag { get; set; }
 
-        //public PlanoContaModel CastDtoToModel(PlanoContaDto planoConta)
-        //{
-        //    var result = new PlanoContaModel(planoConta);
-        //    result.CreateObject(planoConta.Tipo.ToString());
-        //    return result;
-        //}
-
-        public PlanoContaDto CastModalToDto()
+        public PlanoConta CastModalToDto()
         {
-            var planoContaDto = new PlanoContaDto(Id: this.Id, Descricao: this.Descricao, Tipo: this.Tipo[0], Ativo: this.Ativo);
-            return planoContaDto;
+            return new()
+            {
+                Id = this.Id,
+                Descricao = this.Descricao,
+                Tipo = this.Tipo[0],
+                Ativo = this.Ativo
+            };
         }
-
 
         public void DisableEnable()
         {

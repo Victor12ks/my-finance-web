@@ -8,80 +8,39 @@ namespace MyFinanceWeb.Infra.Repositories
     public class TransacaoRepository : ITransacaoRepository
     {
         private readonly MyFinanceDbContext _dbContext;
-        public TransacaoRepository()
+        public TransacaoRepository(MyFinanceDbContext dbContext)
         {
-
+            _dbContext = dbContext;
         }
 
-        public IEnumerable<TransacaoDto> GetAll()
+        public IEnumerable<Transacao> GetAll()
         {
-            return _dbContext.Transacao.ToList();
+            return _dbContext.Transacao.AsNoTracking().Include(x => x.PlanoConta).ToList();
         }
 
-        public Task<List<TransacaoDto>> GetAllAsync()
+        public Transacao? GetById(int id)
         {
-            return _dbContext.Transacao.ToListAsync();
+            return _dbContext.Transacao.AsNoTracking().First(x => x.Id == id);
         }
 
-        public TransacaoDto GetById(int id)
+        public bool Add(Transacao Transacao)
         {
-            return _dbContext.Transacao.Find(id);
+            var result = _dbContext.Add(Transacao).State = EntityState.Added;
+            _dbContext.SaveChanges();
+            return result == EntityState.Added;
         }
 
-        public async Task<TransacaoDto> GetByIdAsync(int id)
+        public bool Update(Transacao Transacao)
         {
-            return await _dbContext.Transacao.FindAsync(id);
-        }
-
-        public bool Remove(int id)
-        {
-            var Transacao = _dbContext.Transacao.Find(id);
-            if (Transacao is { })
-            {
-                _dbContext.Transacao.Remove(Transacao);
-                return true;
-            }
-
-            return false;
-        }
-
-        public void Add(in TransacaoDto sender)
-        {
-            _dbContext.Add(sender).State = EntityState.Added;
-        }
-
-        public void Update(in TransacaoDto sender)
-        {
-            _dbContext.Entry(sender).State = EntityState.Modified;
+            _dbContext.Transacao.Attach(Transacao);
+            _dbContext.Entry(Transacao).State = EntityState.Modified;
+            _dbContext.SaveChanges();
+            return true;
         }
 
         public int Save()
         {
             return _dbContext.SaveChanges();
-        }
-
-        public Task<int> SaveAsync()
-        {
-            return _dbContext.SaveChangesAsync();
-        }
-
-        private bool _disposed = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    _dbContext.Dispose();
-                }
-            }
-            _disposed = true;
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

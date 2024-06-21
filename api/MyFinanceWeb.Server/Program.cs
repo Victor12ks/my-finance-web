@@ -29,8 +29,10 @@ builder.Services.AddControllers()
     .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<PlanoContaValidator>());
 
 builder.Services.AddScoped<IPlanoContaRepository, PlanoContaRepository>();
-builder.Services.AddScoped<IPlanoContaApplication, PlanoContaApplication>();
 builder.Services.AddScoped<IPlanoContaService, PlanoContaService>();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+builder.Services.AddScoped<IPlanoContaApplication, PlanoContaApplication>();
+builder.Services.AddScoped<ITransacaoApplication, TransacaoApplication>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

@@ -4,10 +4,10 @@ namespace MyFinanceWeb.Domain.Interfaces.Repositories
 {
     public interface IPlanoContaRepository
     {
-        IEnumerable<PlanoContaDto> GetAll();
-        PlanoContaDto? GetById(int id);
-        bool Add(PlanoContaDto PlanoConta);
-        bool Update(PlanoContaDto PlanoConta);
+        IEnumerable<PlanoConta> GetAll();
+        PlanoConta? GetById(int id);
+        bool Add(PlanoConta PlanoConta);
+        bool Update(PlanoConta PlanoConta);
         int Save();
     }
 }

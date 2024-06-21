@@ -38,7 +38,7 @@ namespace MyFinanceWeb.Application.Applications
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<IEnumerable<PlanoContaModel>>(Enumerable.Empty<PlanoContaModel>());
+                return new Response<IEnumerable<PlanoContaModel>>(Message.Error.DEFAULT_ERROR);
             }
         }
 

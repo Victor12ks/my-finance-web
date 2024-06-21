@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MyFinanceWeb.Domain.Interfaces.Applications;
-using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
 
 namespace MyFinanceWeb.Server.Controllers
@@ -16,11 +15,7 @@ namespace MyFinanceWeb.Server.Controllers
             _application = application;
         }
 
-        //[HttpGet("/{id}")]
-        //public IActionResult GetById()
-        //{
-        //    return Ok(_service.GetAll());
-        //}
+
         [HttpGet]
         public IActionResult GetAll()
         {

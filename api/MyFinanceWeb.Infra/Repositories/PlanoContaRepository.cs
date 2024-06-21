@@ -13,24 +13,24 @@ namespace MyFinanceWeb.Infra.Repositories
             _dbContext = dbContext;
         }
 
-        public IEnumerable<PlanoContaDto> GetAll()
+        public IEnumerable<PlanoConta> GetAll()
         {
             return _dbContext.PlanoConta.AsNoTracking().ToList();
         }
 
-        public PlanoContaDto? GetById(int id)
+        public PlanoConta? GetById(int id)
         {
             return _dbContext.PlanoConta.AsNoTracking().First(x => x.Id == id);
         }
 
-        public bool Add(PlanoContaDto planoConta)
+        public bool Add(PlanoConta planoConta)
         {
             var result = _dbContext.Add(planoConta).State = EntityState.Added;
             _dbContext.SaveChanges();
             return result == EntityState.Added;
         }
 
-        public bool Update(PlanoContaDto planoConta)
+        public bool Update(PlanoConta planoConta)
         {
             _dbContext.PlanoConta.Attach(planoConta);
             _dbContext.Entry(planoConta).State = EntityState.Modified;

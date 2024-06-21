@@ -8,11 +8,23 @@ namespace MyFinanceWeb.Infra.Contexts
         public MyFinanceDbContext(DbContextOptions<MyFinanceDbContext> options) : base(options) { }
 
 
-        public DbSet<PlanoContaDto> PlanoConta { get; set; }
-        public DbSet<TransacaoDto> Transacao { get; set; }
+        public DbSet<PlanoConta> PlanoConta { get; set; }
+        public DbSet<Transacao> Transacao { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder options) : base(options) { }
-        //{
-        //}
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Transacao>()
+                .HasKey(t => t.Id);
+
+            modelBuilder.Entity<Transacao>()
+                .HasOne(t => t.PlanoConta)
+                .WithMany()
+                .HasForeignKey(t => t.PlanoContaId);
+
+            modelBuilder.Entity<PlanoConta>()
+                .HasKey(pc => pc.Id);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

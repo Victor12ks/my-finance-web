@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json;
+using System.Drawing;
+using System.Globalization;
 
 namespace MyFinanceWeb.Domain.Utils
 {
@@ -17,6 +19,11 @@ namespace MyFinanceWeb.Domain.Utils
         public static bool IsEqualTo(this string source, string target)
         {
             return source.Equals(target, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static string ConvertToReal(this decimal source)
+        {
+            return source.ToString("C", new CultureInfo("pt-BR"));
         }
     }
 }
