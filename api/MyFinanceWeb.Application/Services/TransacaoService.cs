@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using MyFinanceWeb.Domain.Constants;
-using MyFinanceWeb.Domain.Core;
 using MyFinanceWeb.Domain.Interfaces.Repositories;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
@@ -8,48 +6,42 @@ using MyFinanceWeb.Domain.Models;
 namespace MyFinanceWeb.Application.Services
 {
 
-    public class TransacaoService : ITransacaoService
+    public class TransacaoService(ITransacaoRepository repository, ILogger<TransacaoModel> logger) : ITransacaoService
     {
-        private readonly ITransacaoRepository _repository;
-        private readonly ILogger<TransacaoModel> _logger;
-        public TransacaoService(ITransacaoRepository repository, ILogger<TransacaoModel> logger)
-        {
-            _repository = repository;
-            _logger = logger;
-        }
-        public Response<TransacaoModel> Add(TransacaoModel transacao)
+        private readonly ITransacaoRepository _repository = repository;
+        private readonly ILogger<TransacaoModel> _logger = logger;
+
+        public TransacaoModel? Add(TransacaoModel transacaoModel)
         {
             try
             {
-                var sucess = _repository.Add(transacao.CastModalToDto());
+                var transacao = _repository.Add(transacaoModel.CastModalToDto());
 
-                if (sucess)
-                    return new Response<TransacaoModel>(transacao);
+                if (transacao)
+                    return transacaoModel;
 
-                return new Response<TransacaoModel>(Message.Error.DEFAULT_ERROR);
+                return null;
             }
             catch (Exception ex)
             {
                 _logger.LogError(message: ex.Message);
-                return new Response<TransacaoModel>(Message.Error.DEFAULT_ERROR);
+                throw;
             }
         }
 
-        public Response<List<TransacaoModel>> GetAll()
+        public List<TransacaoModel> GetAll()
         {
             try
             {
-                var result = new Response<List<TransacaoModel>>();
+                var result = new List<TransacaoModel>();
                 var transacoes = _repository.GetAll();
 
-                if (transacoes is null || transacoes.Count() <= 0)
+                if (transacoes is null || transacoes.Count == 0)
                     return result;
-
-                result.Data = new List<TransacaoModel>();
 
                 transacoes.ForEach(transacao =>
                 {
-                    result.Data.Add(new TransacaoModel(transacao));
+                    result.Add(new TransacaoModel(transacao));
                 });
 
                 return result;
@@ -57,68 +49,72 @@ namespace MyFinanceWeb.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<List<TransacaoModel>>();
+                return [];
             }
         }
 
-        public Response<TransacaoModel> GetById(int id)
+        public TransacaoModel? GetById(int id)
         {
             try
             {
                 var transacao = _repository.GetById(id);
 
                 if (transacao is null)
-                    return new Response<TransacaoModel>();
+                    return new TransacaoModel();
 
-                var result = new TransacaoModel(transacao);
-
-                return new Response<TransacaoModel>(result);
+                return new TransacaoModel(transacao);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<TransacaoModel>(Message.Error.DEFAULT_ERROR);
+                throw;
             }
         }
 
-        public Response<bool> Remove(TransacaoModel transacao)
+        public bool HasTransacao(int id)
         {
             try
             {
-                var sucess = _repository.Remove(transacao.CastModalToDto());
+                return _repository.HasTransacao(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex?.Message + ex?.StackTrace);
+                return false;
+            }
+        }
 
-                if (sucess)
-                    return new Response<bool>();
 
-                return new Response<bool>(Message.Error.DEFAULT_ERROR);
+        public bool Remove(TransacaoModel transacaoModel)
+        {
+            try
+            {
+                return _repository.Remove(transacaoModel.CastModalToDto());
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(message: ex.Message);
-                return new Response<bool>(Message.Error.DEFAULT_ERROR);
+                return false;
             }
         }
 
-        public Response<TransacaoModel> Update(TransacaoModel transacao)
+        public TransacaoModel? Update(TransacaoModel transacaoModel)
         {
             try
             {
-                var hasTransacao = GetById(transacao.Codigo ?? 0)?.Data is not null;
 
-                if (!hasTransacao)
-                    return new Response<TransacaoModel>();
-
-                var sucess = _repository.Update(transacao.CastModalToDto());
+                var sucess = _repository.Update(transacaoModel.CastModalToDto());
 
                 if (sucess)
-                    return new Response<TransacaoModel>(transacao);
+                    return transacaoModel;
 
-                return new Response<TransacaoModel>(Message.Error.DEFAULT_ERROR);
+                return null;
             }
             catch (Exception ex)
             {
                 _logger.LogError(message: ex.Message);
-                return new Response<TransacaoModel>(Message.Error.DEFAULT_ERROR);
+                return null;
             }
         }
     }

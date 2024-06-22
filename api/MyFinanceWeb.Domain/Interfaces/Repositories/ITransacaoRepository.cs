@@ -6,9 +6,10 @@ namespace MyFinanceWeb.Domain.Interfaces.Repositories
     {
         List<Transacao> GetAll();
         Transacao? GetById(int id);
-        bool Add(Transacao Transacao);
-        bool Update(Transacao Transacao);
-        bool Remove(Transacao Transacao);
+        bool Add(Transacao transacao);
+        bool HasTransacao(int id);
+        bool Update(Transacao transacao);
+        bool Remove(Transacao transacao);
         int Save();
     }
 }

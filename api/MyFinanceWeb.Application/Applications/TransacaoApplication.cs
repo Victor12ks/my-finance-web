@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using MyFinanceWeb.Domain.Constants;
 using MyFinanceWeb.Domain.Core;
-using MyFinanceWeb.Domain.Dtos;
 using MyFinanceWeb.Domain.Interfaces.Applications;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
@@ -22,7 +21,7 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                return _service.GetAll();
+                return new Response<List<TransacaoModel>>(_service.GetAll());
             }
             catch (Exception ex)
             {
@@ -35,7 +34,11 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                return _service.GetById(id);
+                var transacao = _service.GetById(id);
+                if (transacao is not null)
+                    return new Response<TransacaoModel>(transacao);
+
+                return new Response<TransacaoModel>("Não foi localizada nenhuma transação com esse código.");
             }
             catch (Exception ex)
             {
@@ -49,11 +52,17 @@ namespace MyFinanceWeb.Application.Applications
             throw new NotImplementedException();
         }
 
-        public Response<TransacaoModel> Register(TransacaoModel transacao)
+        public Response<TransacaoModel> Register(TransacaoModel transacaoModel)
         {
             try
             {
-                return _service.Add(transacao);
+                var transacao = _service.Add(transacaoModel);
+
+                if (transacao is not null)
+                    return new Response<TransacaoModel>(transacao);
+
+                return new Response<TransacaoModel>("Não foi possível adicionar essa transação.");
+
             }
             catch (Exception ex)
             {
@@ -66,12 +75,12 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                var transacao = _service.GetById(id)?.Data;
+                var transacao = _service.GetById(id);
 
                 if (transacao is not null)
-                    return _service.Remove(transacao);
+                    return new Response<bool>(_service.Remove(transacao));
 
-                return new Response<bool>("Não foi encontrado nenhum registro com esse código.");
+                return new Response<bool>("Não foi possível remover essa transação.");
             }
             catch (Exception ex)
             {
@@ -80,14 +89,21 @@ namespace MyFinanceWeb.Application.Applications
             }
         }
 
-        public Response<TransacaoModel> Update(TransacaoModel transacao)
+        public Response<TransacaoModel> Update(TransacaoModel transacaoModal)
         {
             try
             {
-                if (_service.GetById(transacao.Codigo ?? 0) is not null)
-                    return _service.Update(transacao);
+                if (!_service.HasTransacao(transacaoModal.Codigo ?? 0))
+                    return new Response<TransacaoModel>("Não foi encontrado nenhuma transação para atualizar.");
 
-                return new Response<TransacaoModel>("Não foi encontrado nenhum registro com esse código.");
+                var transacao = _service.Update(transacaoModal);
+
+                if (transacao is not null)
+                    return new Response<TransacaoModel>(transacao);
+
+                return new Response<TransacaoModel>("Não foi possível atualizar essa transação.");
+
+
             }
             catch (Exception ex)
             {

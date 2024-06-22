@@ -5,10 +5,11 @@ namespace MyFinanceWeb.Domain.Interfaces.Services
 {
     public interface ITransacaoService
     {
-        Response<List<TransacaoModel>> GetAll();
-        Response<TransacaoModel> GetById(int id);
-        Response<TransacaoModel> Add(TransacaoModel transacao);
-        Response<TransacaoModel> Update(TransacaoModel transacao);
-        Response<bool> Remove(TransacaoModel transacao);
+        List<TransacaoModel> GetAll();
+        TransacaoModel? GetById(int id);
+        bool HasTransacao(int id);
+        TransacaoModel? Add(TransacaoModel transacaoModel);
+        TransacaoModel? Update(TransacaoModel transacaoModel);
+        bool Remove(TransacaoModel transacaoModel);
     }
 }

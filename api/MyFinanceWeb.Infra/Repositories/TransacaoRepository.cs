@@ -23,26 +23,31 @@ namespace MyFinanceWeb.Infra.Repositories
             return _dbContext.Transacao.AsNoTracking().Include(x => x.PlanoConta).First(x => x.Id == id);
         }
 
-        public bool Add(Transacao Transacao)
+        public bool HasTransacao(int id)
         {
-            var result = _dbContext.Add(Transacao).State = EntityState.Added;
-            _dbContext.SaveChanges();
-            return result == EntityState.Added;
+            return _dbContext.Transacao.Any(t => t.Id.Equals(id));
         }
 
-        public bool Remove(Transacao Transacao)
+        public bool Add(Transacao transacao)
         {
-            var result = _dbContext.Remove(Transacao).State = EntityState.Deleted;
-            _dbContext.SaveChanges();
-            return result == EntityState.Deleted;
+            _dbContext.Add(transacao).State = EntityState.Added;
+            var result = _dbContext.SaveChanges();
+            return result > 0;
         }
 
-        public bool Update(Transacao Transacao)
+        public bool Remove(Transacao transacao)
         {
-            _dbContext.Transacao.Attach(Transacao);
-            _dbContext.Entry(Transacao).State = EntityState.Modified;
-            _dbContext.SaveChanges();
-            return true;
+            _dbContext.Remove(transacao).State = EntityState.Deleted;
+            var result = _dbContext.SaveChanges();
+            return result > 0;
+        }
+
+        public bool Update(Transacao transacao)
+        {
+            _dbContext.Transacao.Attach(transacao);
+            _dbContext.Entry(transacao).State = EntityState.Modified;
+            var result = _dbContext.SaveChanges();
+            return result > 0;
         }
 
         public int Save()

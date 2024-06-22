@@ -8,8 +8,8 @@ namespace MyFinanceWeb.Domain.Interfaces.Applications
         public Response<TransacaoModel> GetById(int id);
         public Response<List<TransacaoModel>> GetAll();
         public Response<List<TransacaoModel>> GetByPlanoContaId(int transacao);
-        public Response<TransacaoModel> Register(TransacaoModel transacao);
-        public Response<TransacaoModel> Update(TransacaoModel transacao);
+        public Response<TransacaoModel> Register(TransacaoModel transacaoModel);
+        public Response<TransacaoModel> Update(TransacaoModel transacaoModel);
         public Response<bool> Remove(int id);
     }
 }

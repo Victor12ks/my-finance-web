@@ -13,7 +13,7 @@
         }
         public Response()
         {
-            
+
         }
         public Response(TResponse data, string message = "", bool sucess = true)
         {
@@ -21,7 +21,7 @@
             this.Message = message;
             this.Success = sucess;
         }
-        
+
         public Response(string message)
         {
             this.Message = message;

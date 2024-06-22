@@ -476,3 +476,4 @@ ehthumbs.db
 # Specified directories/files
 wwwroot/dist/
 wwwroot/assets/
+/.vs/MyFinanceWeb/v17/.wsuo

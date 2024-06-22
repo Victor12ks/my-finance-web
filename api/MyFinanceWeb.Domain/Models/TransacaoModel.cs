@@ -1,5 +1,4 @@
 ﻿using MyFinanceWeb.Domain.Dtos;
-using MyFinanceWeb.Domain.Utils;
 
 namespace MyFinanceWeb.Domain.Models
 {
@@ -24,14 +23,13 @@ namespace MyFinanceWeb.Domain.Models
 
         public Transacao CastModalToDto()
         {
-            //_ = decimal.TryParse(Valor, out decimal valor);
             return new()
             {
                 Id = Codigo ?? 0,
                 Historico = this.Historico,
                 Data = DateTime.Parse(DataHora),
                 Valor = Valor,
-                PlanoContaId = (int)PlanoContaId
+                PlanoContaId = PlanoContaId ?? 0
             };
         }
         public void CastDtoToModal(Transacao transacao)
