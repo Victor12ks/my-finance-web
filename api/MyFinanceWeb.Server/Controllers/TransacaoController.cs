@@ -32,7 +32,8 @@ namespace MyFinanceWeb.Server.Controllers
         [HttpPut]
         public IActionResult Update(TransacaoModel modal)
         {
-            return Ok(_application.Update(modal));
+            var result = _application.Update(modal);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]

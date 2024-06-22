@@ -4,10 +4,11 @@ namespace MyFinanceWeb.Domain.Interfaces.Repositories
 {
     public interface ITransacaoRepository
     {
-        IEnumerable<Transacao> GetAll();
+        List<Transacao> GetAll();
         Transacao? GetById(int id);
         bool Add(Transacao Transacao);
         bool Update(Transacao Transacao);
+        bool Remove(Transacao Transacao);
         int Save();
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MyFinanceWeb.Domain.Constants;
 using MyFinanceWeb.Domain.Core;
+using MyFinanceWeb.Domain.Dtos;
 using MyFinanceWeb.Domain.Interfaces.Applications;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
@@ -17,7 +18,7 @@ namespace MyFinanceWeb.Application.Applications
             _logger = logger;
         }
 
-        public Response<IEnumerable<TransacaoModel>> GetAll()
+        public Response<List<TransacaoModel>> GetAll()
         {
             try
             {
@@ -26,7 +27,7 @@ namespace MyFinanceWeb.Application.Applications
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<IEnumerable<TransacaoModel>>(Message.Error.DEFAULT_ERROR);
+                return new Response<List<TransacaoModel>>(Message.Error.DEFAULT_ERROR);
             }
         }
 
@@ -43,7 +44,7 @@ namespace MyFinanceWeb.Application.Applications
             }
         }
 
-        public Response<IEnumerable<TransacaoModel>> GetByPlanoContaId(int transacao)
+        public Response<List<TransacaoModel>> GetByPlanoContaId(int transacao)
         {
             throw new NotImplementedException();
         }
@@ -65,10 +66,12 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                if (_service.GetById(id) is not null)
-                    return _service.Remove(id);
-                else
-                    return new Response<bool>("Não foi encontrado nenhum registro com esse código.");
+                var transacao = _service.GetById(id)?.Data;
+
+                if (transacao is not null)
+                    return _service.Remove(transacao);
+
+                return new Response<bool>("Não foi encontrado nenhum registro com esse código.");
             }
             catch (Exception ex)
             {
@@ -81,10 +84,10 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                if (_service.GetById(transacao.Codigo) is not null)
+                if (_service.GetById(transacao.Codigo ?? 0) is not null)
                     return _service.Update(transacao);
-                else
-                    return new Response<TransacaoModel>("Não foi encontrado nenhum registro com esse código.");
+
+                return new Response<TransacaoModel>("Não foi encontrado nenhum registro com esse código.");
             }
             catch (Exception ex)
             {

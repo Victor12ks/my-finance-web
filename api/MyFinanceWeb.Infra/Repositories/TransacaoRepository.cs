@@ -13,14 +13,14 @@ namespace MyFinanceWeb.Infra.Repositories
             _dbContext = dbContext;
         }
 
-        public IEnumerable<Transacao> GetAll()
+        public List<Transacao> GetAll()
         {
             return _dbContext.Transacao.AsNoTracking().Include(x => x.PlanoConta).ToList();
         }
 
         public Transacao? GetById(int id)
         {
-            return _dbContext.Transacao.AsNoTracking().First(x => x.Id == id);
+            return _dbContext.Transacao.AsNoTracking().Include(x => x.PlanoConta).First(x => x.Id == id);
         }
 
         public bool Add(Transacao Transacao)
@@ -28,6 +28,13 @@ namespace MyFinanceWeb.Infra.Repositories
             var result = _dbContext.Add(Transacao).State = EntityState.Added;
             _dbContext.SaveChanges();
             return result == EntityState.Added;
+        }
+
+        public bool Remove(Transacao Transacao)
+        {
+            var result = _dbContext.Remove(Transacao).State = EntityState.Deleted;
+            _dbContext.SaveChanges();
+            return result == EntityState.Deleted;
         }
 
         public bool Update(Transacao Transacao)

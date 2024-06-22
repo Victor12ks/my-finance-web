@@ -29,7 +29,7 @@ namespace MyFinanceWeb.Application.Applications
             }
         }
 
-        public Response<IEnumerable<PlanoContaModel>> GetAll()
+        public Response<List<PlanoContaModel>> GetAll()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace MyFinanceWeb.Application.Applications
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<IEnumerable<PlanoContaModel>>(Message.Error.DEFAULT_ERROR);
+                return new Response<List<PlanoContaModel>>(Message.Error.DEFAULT_ERROR);
             }
         }
 

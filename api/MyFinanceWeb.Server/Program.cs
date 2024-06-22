@@ -30,6 +30,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddScoped<IPlanoContaRepository, PlanoContaRepository>();
 builder.Services.AddScoped<IPlanoContaService, PlanoContaService>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<IPlanoContaApplication, PlanoContaApplication>();
 builder.Services.AddScoped<ITransacaoApplication, TransacaoApplication>();

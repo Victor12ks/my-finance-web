@@ -4,8 +4,7 @@ import type { TableProps } from "antd";
 import { Layout, Menu, Breadcrumb } from "antd";
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Content, Footer, Header } from "antd/es/layout/layout";
-import TableResult from "../../components/tableResult/Index";
-import PlanoConta from "../planoConta/Index";
+import Transacao from "../transacao/Index";
 
 interface DataType {
   key: string;
@@ -119,7 +118,8 @@ const Home: React.FC = () => {
           Welcome to the Home Page!
         </div> */}
         {/* <TableResult /> */}
-        <PlanoConta />
+        {/* <PlanoConta /> */}
+        <Transacao />
       </Content>
       <Footer style={{ textAlign: "center" }}>
         Ant Design ©2024 Created by Ant UED

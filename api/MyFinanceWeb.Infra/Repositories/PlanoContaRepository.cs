@@ -13,7 +13,7 @@ namespace MyFinanceWeb.Infra.Repositories
             _dbContext = dbContext;
         }
 
-        public IEnumerable<PlanoConta> GetAll()
+        public List<PlanoConta> GetAll()
         {
             return _dbContext.PlanoConta.AsNoTracking().ToList();
         }

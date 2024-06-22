@@ -36,24 +36,24 @@ namespace MyFinanceWeb.Application.Services
             }
         }
 
-        public Response<IEnumerable<PlanoContaModel>> GetAll()
+        public Response<List<PlanoContaModel>> GetAll()
         {
             try
             {
                 var planosConta = _repository.GetAll();
 
                 if (planosConta is null || planosConta.Count() <= 0)
-                    return new Response<IEnumerable<PlanoContaModel>>(Enumerable.Empty<PlanoContaModel>());
+                    return new Response<List<PlanoContaModel>>();
 
                 var result = planosConta.Clone<List<PlanoContaModel>>();
                 result.ForEach(pc => pc.CreateObject());
 
-                return new Response<IEnumerable<PlanoContaModel>>(result);
+                return new Response<List<PlanoContaModel>>(result);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<IEnumerable<PlanoContaModel>>(Enumerable.Empty<PlanoContaModel>());
+                return new Response<List<PlanoContaModel>>();
             }
         }
 

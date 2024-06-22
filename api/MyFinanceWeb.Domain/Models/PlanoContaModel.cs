@@ -15,6 +15,7 @@ namespace MyFinanceWeb.Domain.Models
             Ativo = planoConta.Ativo;
             Descricao = planoConta.Descricao;
             Id = planoConta.Id;
+            CreateObject(planoConta.Tipo);
         }
 
         public int Id { get; set; }
@@ -47,6 +48,19 @@ namespace MyFinanceWeb.Domain.Models
                 Tipo = "Receita";
             }
             else if (Tipo.IsEqualTo("D"))
+            {
+                CorTag = "green";
+                Tipo = "Despesa";
+            }
+        }
+        private void CreateObject(char tipo)
+        {
+            if (tipo.ToString().IsEqualTo("R"))
+            {
+                CorTag = "volcano";
+                Tipo = "Receita";
+            }
+            else if (tipo.ToString().IsEqualTo("D"))
             {
                 CorTag = "green";
                 Tipo = "Despesa";

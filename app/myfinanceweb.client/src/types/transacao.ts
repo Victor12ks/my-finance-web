@@ -1,9 +1,10 @@
 import { PlanoContaModel } from "./planoConta";
 
-export interface Transacao {
-  codigo: number;
-  descricao: string;
-  data: Date;
+export interface TransacaoModel {
+  codigo?: number;
+  historico: string;
+  dataHora: Date;
+  planoContaId: number;
   planoConta: PlanoContaModel;
   valor: number;
 }
