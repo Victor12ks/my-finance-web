@@ -9,94 +9,82 @@ using MyFinanceWeb.Domain.Utils;
 namespace MyFinanceWeb.Application.Services
 {
 
-    public class PlanoContaService : IPlanoContaService
+    public class PlanoContaService(IPlanoContaRepository repository, ILogger<PlanoContaModel> logger) : IPlanoContaService
     {
-        private readonly IPlanoContaRepository _repository;
-        private readonly ILogger<PlanoContaModel> _logger;
-        public PlanoContaService(IPlanoContaRepository repository, ILogger<PlanoContaModel> logger)
-        {
-            _repository = repository;
-            _logger = logger;
-        }
-        public Response<PlanoContaModel> Add(PlanoContaModel planoConta)
+        private readonly IPlanoContaRepository _repository = repository;
+        private readonly ILogger<PlanoContaModel> _logger = logger;
+
+        public PlanoContaModel? Add(PlanoContaModel planoContaModel)
         {
             try
             {
-                var sucess = _repository.Add(planoConta.CastModalToDto());
+                var planoConta = _repository.Add(planoContaModel.CastModalToDto());
 
-                if (sucess)
-                    return new Response<PlanoContaModel>(planoConta);
+                if (planoConta)
+                    return planoContaModel;
 
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                return null;
             }
             catch (Exception ex)
             {
                 _logger.LogError(message: ex.Message);
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                throw;
             }
         }
 
-        public Response<List<PlanoContaModel>> GetAll()
+        public List<PlanoContaModel> GetAll()
         {
             try
             {
-                var planosConta = _repository.GetAll();
+                var result = new List<PlanoContaModel>();
+                var transacoes = _repository.GetAll();
 
-                if (planosConta is null || planosConta.Count() <= 0)
-                    return new Response<List<PlanoContaModel>>();
+                if (transacoes?.Count == 0)
+                    return result;
 
-                var result = planosConta.Clone<List<PlanoContaModel>>();
-                result.ForEach(pc => pc.CreateObject());
+                transacoes?.ForEach(transacao =>
+                {
+                    result.Add(new PlanoContaModel(transacao));
+                });
 
-                return new Response<List<PlanoContaModel>>(result);
+                return result;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<List<PlanoContaModel>>();
+                return [];
             }
         }
 
-        public Response<PlanoContaModel> GetById(int id)
+        public bool HasPlanoConta(int id)
         {
             try
             {
-                var planoConta = _repository.GetById(id);
-
-                if (planoConta is null)
-                    return new Response<PlanoContaModel>();
-
-                var result = planoConta.Clone<PlanoContaModel>();
-                result.CreateObject();
-                return new Response<PlanoContaModel>(result);
+                return _repository.HasPlanoConta(id);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                return false;
             }
         }
 
-        public Response<PlanoContaModel> Update(PlanoContaModel planoConta)
+        public PlanoContaModel? Update(PlanoContaModel planoContaModel)
         {
             try
             {
-                var hasPlanoConta = GetById(planoConta.Id)?.Data is not null;
 
-                if (!hasPlanoConta)
-                    return new Response<PlanoContaModel>();
-
-                var sucess = _repository.Update(planoConta.CastModalToDto());
+                var sucess = _repository.Update(planoContaModel.CastModalToDto());
 
                 if (sucess)
-                    return new Response<PlanoContaModel>(planoConta);
+                    return planoContaModel;
 
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                return null;
             }
             catch (Exception ex)
             {
                 _logger.LogError(message: ex.Message);
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                return null;
             }
         }
     }

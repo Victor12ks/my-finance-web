@@ -5,9 +5,9 @@ namespace MyFinanceWeb.Domain.Interfaces.Services
 {
     public interface IPlanoContaService
     {
-        Response<List<PlanoContaModel>> GetAll();
-        Response<PlanoContaModel> GetById(int id);
-        Response<PlanoContaModel> Add(PlanoContaModel planoConta);
-        Response<PlanoContaModel> Update(PlanoContaModel planoConta);
+        List<PlanoContaModel> GetAll();
+        bool HasPlanoConta(int id);
+        PlanoContaModel? Add(PlanoContaModel planoConta);
+        PlanoContaModel? Update(PlanoContaModel planoConta);
     }
 }

@@ -5,17 +5,17 @@ using MyFinanceWeb.Infra.Contexts;
 
 namespace MyFinanceWeb.Infra.Repositories
 {
-    public class PlanoContaRepository : IPlanoContaRepository
+    public class PlanoContaRepository(MyFinanceDbContext dbContext) : IPlanoContaRepository
     {
-        private readonly MyFinanceDbContext _dbContext;
-        public PlanoContaRepository(MyFinanceDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly MyFinanceDbContext _dbContext = dbContext;
 
         public List<PlanoConta> GetAll()
         {
             return _dbContext.PlanoConta.AsNoTracking().ToList();
+        }
+        public bool HasPlanoConta(int id)
+        {
+            return _dbContext.PlanoConta.Any(t => t.Id.Equals(id));
         }
 
         public PlanoConta? GetById(int id)
@@ -26,21 +26,14 @@ namespace MyFinanceWeb.Infra.Repositories
         public bool Add(PlanoConta planoConta)
         {
             var result = _dbContext.Add(planoConta).State = EntityState.Added;
-            _dbContext.SaveChanges();
-            return result == EntityState.Added;
+            return _dbContext.SaveChanges() > 0;
         }
 
         public bool Update(PlanoConta planoConta)
         {
             _dbContext.PlanoConta.Attach(planoConta);
-            _dbContext.Entry(planoConta).State = EntityState.Modified;
-            _dbContext.SaveChanges();
-            return true;
-        }
-
-        public int Save()
-        {
-            return _dbContext.SaveChanges();
+            _dbContext.Entry(planoConta);
+            return _dbContext.SaveChanges() > 0;
         }
     }
 }

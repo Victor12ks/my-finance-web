@@ -5,13 +5,9 @@ using MyFinanceWeb.Infra.Contexts;
 
 namespace MyFinanceWeb.Infra.Repositories
 {
-    public class TransacaoRepository : ITransacaoRepository
+    public class TransacaoRepository(MyFinanceDbContext dbContext) : ITransacaoRepository
     {
-        private readonly MyFinanceDbContext _dbContext;
-        public TransacaoRepository(MyFinanceDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly MyFinanceDbContext _dbContext = dbContext;
 
         public List<Transacao> GetAll()
         {

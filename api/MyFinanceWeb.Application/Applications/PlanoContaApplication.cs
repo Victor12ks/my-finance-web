@@ -7,20 +7,21 @@ using MyFinanceWeb.Domain.Models;
 
 namespace MyFinanceWeb.Application.Applications
 {
-    public class PlanoContaApplication : IPlanoContaApplication
+    public class PlanoContaApplication(IPlanoContaService service, ILogger<PlanoContaModel> logger) : IPlanoContaApplication
     {
-        private readonly IPlanoContaService _service;
-        private readonly ILogger<PlanoContaModel> _logger;
-        public PlanoContaApplication(IPlanoContaService service, ILogger<PlanoContaModel> logger)
-        {
-            _service = service;
-            _logger = logger;
-        }
-        public Response<PlanoContaModel> Add(PlanoContaModel planoConta)
+        private readonly IPlanoContaService _service = service;
+        private readonly ILogger<PlanoContaModel> _logger = logger;
+
+        public Response<PlanoContaModel> Add(PlanoContaModel planoContaModel)
         {
             try
             {
-                return _service.Add(planoConta);
+                var planoConta = _service.Add(planoContaModel);
+
+                if (planoConta is not null)
+                    return new Response<PlanoContaModel>(planoConta);
+
+                return new Response<PlanoContaModel>("Não foi possível adicionar esse tipo de transação.");
             }
             catch (Exception ex)
             {
@@ -33,7 +34,7 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                return _service.GetAll();
+                return new Response<List<PlanoContaModel>>(_service.GetAll());
             }
             catch (Exception ex)
             {
@@ -42,24 +43,19 @@ namespace MyFinanceWeb.Application.Applications
             }
         }
 
-        public Response<PlanoContaModel> GetById(int id)
+        public Response<PlanoContaModel> Update(PlanoContaModel planoContaModel)
         {
             try
             {
-                return _service.GetById(id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex?.Message + ex?.StackTrace);
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
-            }
-        }
+                if (!_service.HasPlanoConta(planoContaModel.Id))
+                    return new Response<PlanoContaModel>("Não foi encontrado nenhum tipo de transação para atualizar.");
 
-        public Response<PlanoContaModel> Update(PlanoContaModel planoConta)
-        {
-            try
-            {
-                return _service.Update(planoConta);
+                var planoConta = _service.Update(planoContaModel);
+
+                if (planoConta is not null)
+                    return new Response<PlanoContaModel>(planoContaModel);
+
+                return new Response<PlanoContaModel>("Não foi possível atualizar esse tipo de transação.");
             }
             catch (Exception ex)
             {
@@ -72,13 +68,17 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
+                if (!_service.HasPlanoConta(planoConta.Id))
+                    return new Response<PlanoContaModel>("Não foi localizada nenhum tipo de transação com esse código.");
+
                 planoConta.DisableEnable();
+
                 var result = Update(planoConta);
 
                 if (result.Success)
                     return new Response<PlanoContaModel>(planoConta);
 
-                return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+                return new Response<PlanoContaModel>("Não foi atualizar esse tipo de transação.");
             }
             catch (Exception ex)
             {

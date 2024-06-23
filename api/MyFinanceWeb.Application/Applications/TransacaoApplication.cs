@@ -47,11 +47,6 @@ namespace MyFinanceWeb.Application.Applications
             }
         }
 
-        public Response<List<TransacaoModel>> GetByPlanoContaId(int transacao)
-        {
-            throw new NotImplementedException();
-        }
-
         public Response<TransacaoModel> Register(TransacaoModel transacaoModel)
         {
             try
@@ -62,7 +57,6 @@ namespace MyFinanceWeb.Application.Applications
                     return new Response<TransacaoModel>(transacao);
 
                 return new Response<TransacaoModel>("Não foi possível adicionar essa transação.");
-
             }
             catch (Exception ex)
             {
