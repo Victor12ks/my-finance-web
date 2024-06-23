@@ -50,7 +50,7 @@ const Home: React.FC = () => {
           </Menu.Item>
         </Menu>
       </Header>
-      <Content style={{ padding: "0 50px", flex: 1, minHeight: '100vh' }}>
+      <Content style={{ padding: "0 50px", flex: 1, minHeight: "100vh" }}>
         <Breadcrumb style={{ margin: "16px 0" }}>
           <Breadcrumb.Item>Home</Breadcrumb.Item>
           <Breadcrumb.Item>

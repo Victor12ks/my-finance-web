@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Skeleton, Table, Tag, Flex, notification } from "antd";
 import { TransacaoModel } from "../../types/transacao";
 import { ColumnsType, TablePaginationConfig } from "antd/es/table";
@@ -25,19 +25,21 @@ const Transacao: React.FC = () => {
     null
   );
 
-  useEffect(() => {
-    const fetchPlanosConta = async () => {
-      try {
-        const PlanosConta = await apiTransacao.getTransacoes();
-        if (PlanosConta && PlanosConta.data) setData(PlanosConta.data);
-      } catch (error) {
-        showErroOperacao();
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [api, contextHolder] = notification.useNotification();
 
-    fetchPlanosConta();
+  const fetchTransacoes = useCallback(async () => {
+    try {
+      const planosConta = await apiTransacao.getTransacoes();
+      if (planosConta && planosConta.data) setData(planosConta.data);
+    } catch (error) {
+      showErroOperacao();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTransacoes();
   }, []);
 
   const handleCreateTransacao = async (trancasao: TransacaoModel) => {
@@ -86,6 +88,8 @@ const Transacao: React.FC = () => {
   const showMessageResponse = (response: ResponseBase<any>) => {
     if (response.success) showSucessoOperacao();
     else showErroOperacao(response?.message);
+
+    fetchTransacoes();
   };
 
   const columns: ColumnsType<TransacaoModel> = [
@@ -99,7 +103,7 @@ const Transacao: React.FC = () => {
       title: "Descrição",
       dataIndex: "historico",
       key: "historico",
-      width: "30%",
+      width: "28%",
     },
     {
       title: "Data",
@@ -125,7 +129,7 @@ const Transacao: React.FC = () => {
       title: "Valor",
       dataIndex: "valor",
       key: "valor",
-      width: "15%",
+      width: "13%",
       render: (value: number) => {
         return new Intl.NumberFormat("pt-BR", {
           style: "currency",
@@ -136,8 +140,8 @@ const Transacao: React.FC = () => {
     {
       title: "Action",
       key: "action",
-      width: "25%",
-      render: (text, record) => (
+      width: "29%",
+      render: (record) => (
         <Flex wrap gap="small">
           <Button
             icon={<EditOutlined />}
@@ -178,7 +182,6 @@ const Transacao: React.FC = () => {
   };
 
   const handleConfirm = (updatedRecord: TransacaoModel) => {
-    console.log({ updatedRecord });
     if (modalAction === EModalAction.Create)
       handleCreateTransacao(updatedRecord);
     else if (modalAction === EModalAction.Update)
@@ -190,7 +193,6 @@ const Transacao: React.FC = () => {
     setEditingRecord(null);
     setModalAction(undefined);
   };
-  const [api, contextHolder] = notification.useNotification();
 
   const openNotification = (
     title: string,
@@ -220,8 +222,8 @@ const Transacao: React.FC = () => {
           marginBottom: "16px",
         }}
       >
-        <div>{/* Outros elementos à esquerda, se houver */}</div>
-        <Button type="primary" icon={<PlusOutlined />}>
+        <div>{}</div>
+        <Button type="primary" onClick={handleAdd} icon={<PlusOutlined />}>
           Novo
         </Button>
       </div>

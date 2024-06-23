@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Skeleton, Table, Tag, Flex, notification } from "antd";
 import { PlanoContaModel } from "../../types/planoConta";
 import { ColumnsType } from "antd/es/table";
 import "./styles.css";
 import EditModal from "./EditModal";
-import {
-  getPlanosConta,
-  createPlanoConta,
-  disableEnablePlanoConta,
-  updatePlanoConta,
-} from "../../api/planoContaApi";
+import * as apiPlanoConta from "../../api/planoContaApi";
 import { EModalAction } from "../../types/utils";
 import { IconType } from "antd/es/notification/interface";
 import {
+  PlusOutlined,
   CheckOutlined,
   CloseOutlined,
   EditOutlined,
 } from "@ant-design/icons";
+import { ResponseBase } from "../../types/reponse";
 
 const PlanoConta: React.FC = () => {
   const [data, setData] = useState<PlanoContaModel[]>([]);
@@ -28,26 +25,25 @@ const PlanoConta: React.FC = () => {
     null
   );
 
-  useEffect(() => {
-    const fetchPlanosConta = async () => {
-      try {
-        const PlanosConta = await getPlanosConta();
-        if (PlanosConta && PlanosConta.data) setData(PlanosConta.data);
-      } catch (error) {
-        showErroOperacao();
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPlanosConta = useCallback(async () => {
+    try {
+      const PlanosConta = await apiPlanoConta.getPlanosConta();
+      if (PlanosConta && PlanosConta.data) setData(PlanosConta.data);
+    } catch (error) {
+      showErroOperacao();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
+  useEffect(() => {
     fetchPlanosConta();
   }, []);
 
   const handleCreatePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const result = await createPlanoConta(planoConta);
-      if (result && result.success) showSucessoOperacao();
-      else showErroOperacao();
+      const result = await apiPlanoConta.createPlanoConta(planoConta);
+      showMessageResponse(result);
     } catch (error) {
       showErroOperacao();
     }
@@ -55,9 +51,8 @@ const PlanoConta: React.FC = () => {
 
   const handleUpdatePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const result = await updatePlanoConta(planoConta);
-      if (result && result.success) showSucessoOperacao();
-      else showErroOperacao();
+      const result = await apiPlanoConta.updatePlanoConta(planoConta);
+      showMessageResponse(result);
     } catch (error) {
       showErroOperacao();
     }
@@ -65,18 +60,17 @@ const PlanoConta: React.FC = () => {
 
   const handleDisableEnablePlanoConta = async (planoConta: PlanoContaModel) => {
     try {
-      const result = await disableEnablePlanoConta(planoConta);
-      if (result && result.success) showSucessoOperacao();
-      else showErroOperacao();
+      const result = await apiPlanoConta.disableEnablePlanoConta(planoConta);
+      showMessageResponse(result);
     } catch (error) {
       showErroOperacao();
     }
   };
 
-  const showErroOperacao = () => {
+  const showErroOperacao = (message?: string) => {
     openNotification(
       "Ops...",
-      "Ocorreu um erro ao realizar a sua operação.",
+      message ?? "Ocorreu um erro ao realizar a sua operação.",
       "error"
     );
   };
@@ -89,6 +83,11 @@ const PlanoConta: React.FC = () => {
     );
   };
 
+  const showMessageResponse = (response: ResponseBase<any>) => {
+    if (response.success) showSucessoOperacao();
+    else showErroOperacao(response?.message);
+    fetchPlanosConta();
+  };
   const getRowClassName = (record: PlanoContaModel) => {
     return !record.ativo ? "even-row" : "odd-row";
   };
@@ -123,7 +122,7 @@ const PlanoConta: React.FC = () => {
       title: "Action",
       key: "action",
       width: "25%",
-      render: (text, record) => (
+      render: (record) => (
         <Flex wrap gap="small">
           <Button
             icon={<EditOutlined />}
@@ -205,9 +204,19 @@ const PlanoConta: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <Button type="primary" onClick={handleAdd}>
-        Adicionar
-      </Button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "16px",
+        }}
+      >
+        <div>{}</div>
+        <Button type="primary" onClick={handleAdd} icon={<PlusOutlined />}>
+          Novo
+        </Button>
+      </div>
       {editingRecord && (
         <EditModal
           visible={isModalVisible}
