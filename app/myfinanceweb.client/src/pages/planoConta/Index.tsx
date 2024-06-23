@@ -12,6 +12,11 @@ import {
 } from "../../api/planoContaApi";
 import { EModalAction } from "../../types/utils";
 import { IconType } from "antd/es/notification/interface";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 
 const PlanoConta: React.FC = () => {
   const [data, setData] = useState<PlanoContaModel[]>([]);
@@ -121,25 +126,28 @@ const PlanoConta: React.FC = () => {
       render: (text, record) => (
         <Flex wrap gap="small">
           <Button
+            icon={<EditOutlined />}
             disabled={!record.ativo}
             type="primary"
-            onClick={() => handleEdit(record, "Update")}
+            onClick={() => handleEdit(record, EModalAction.Update)}
           >
             Alterar
           </Button>
           {!record.ativo ? (
             <Button
+              icon={<CheckOutlined />}
               style={{ backgroundColor: "green", color: "white" }}
               type="primary"
-              onClick={() => handleEdit(record, "Delete")}
+              onClick={() => handleEdit(record, EModalAction.Delete)}
             >
               Ativar
             </Button>
           ) : (
             <Button
+              icon={<CloseOutlined />}
               danger
               type="primary"
-              onClick={() => handleEdit(record, "Delete")}
+              onClick={() => handleEdit(record, EModalAction.Delete)}
             >
               Desativar
             </Button>
@@ -156,7 +164,7 @@ const PlanoConta: React.FC = () => {
   };
 
   const handleAdd = () => {
-    setModalAction("Create");
+    setModalAction(EModalAction.Create);
     setEditingRecord({} as PlanoContaModel);
     setIsModalVisible(true);
   };
@@ -168,9 +176,11 @@ const PlanoConta: React.FC = () => {
   };
 
   const handleConfirm = (updatedRecord: PlanoContaModel) => {
-    if (modalAction === "Create") handleCreatePlanoConta(updatedRecord);
-    else if (modalAction === "Update") handleUpdatePlanoConta(updatedRecord);
-    else if (modalAction === "Delete")
+    if (modalAction === EModalAction.Create)
+      handleCreatePlanoConta(updatedRecord);
+    else if (modalAction === EModalAction.Update)
+      handleUpdatePlanoConta(updatedRecord);
+    else if (modalAction === EModalAction.Delete)
       handleDisableEnablePlanoConta(updatedRecord);
 
     setIsModalVisible(false);

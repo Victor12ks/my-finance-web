@@ -15,8 +15,7 @@ import { PlanoContaModel } from "../../types/planoConta";
 import { getPlanosConta } from "../../api/planoContaApi";
 import locale from "antd/lib/date-picker/locale/pt_BR";
 import dayjs from "dayjs";
-import CurrencyInput from "react-currency-input-field";
-import "./transacao.css";
+
 interface EditModalProps {
   visible: boolean;
   onCancel: () => void;
@@ -33,7 +32,7 @@ const EditModal: React.FC<EditModalProps> = ({
   action,
 }) => {
   const [planosConta, setPlanosConta] = useState<PlanoContaModel[]>([]);
-  const [api, contextHolder] = notification.useNotification();
+  const [api] = notification.useNotification();
   const [form] = Form.useForm();
   const { Option } = Select;
 
@@ -66,13 +65,9 @@ const EditModal: React.FC<EditModalProps> = ({
     fetchPlanosConta();
   }, []);
 
-  useEffect(() => {
-    console.log({ initialValues });
-  }, [initialValues]);
-
   return (
     <>
-      {action === "Delete" ? (
+      {action === EModalAction.Delete ? (
         <Modal
           title={"Excluir"}
           open={visible}

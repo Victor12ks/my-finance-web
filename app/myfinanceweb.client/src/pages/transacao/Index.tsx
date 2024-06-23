@@ -1,25 +1,14 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Skeleton,
-  Table,
-  Tag,
-  Flex,
-  notification,
-  DatePicker,
-} from "antd";
+import { Button, Skeleton, Table, Tag, Flex, notification } from "antd";
 import { TransacaoModel } from "../../types/transacao";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import EditModal from "./EditModal";
-import {
-  getTransacoes,
-  createTransacao,
-  removeTransacao,
-  updateTransacao,
-} from "../../api/transacaoApi";
+import * as apiTransacao from "../../api/transacaoApi";
 import { EModalAction } from "../../types/utils";
 import { IconType } from "antd/es/notification/interface";
-import moment, { Moment } from "moment";
+import moment from "moment";
+import { ResponseBase } from "../../types/reponse";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const Transacao: React.FC = () => {
   const [data, setData] = useState<TransacaoModel[]>([]);
@@ -27,6 +16,11 @@ const Transacao: React.FC = () => {
   const [modalAction, setModalAction] = useState<EModalAction>();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pagination, setPagination] = useState<TablePaginationConfig>({
+    current: 1,
+    pageSize: 10,
+    total: data.length,
+  });
   const [editingRecord, setEditingRecord] = useState<TransacaoModel | null>(
     null
   );
@@ -34,7 +28,7 @@ const Transacao: React.FC = () => {
   useEffect(() => {
     const fetchPlanosConta = async () => {
       try {
-        const PlanosConta = await getTransacoes();
+        const PlanosConta = await apiTransacao.getTransacoes();
         if (PlanosConta && PlanosConta.data) setData(PlanosConta.data);
       } catch (error) {
         showErroOperacao();
@@ -48,9 +42,8 @@ const Transacao: React.FC = () => {
 
   const handleCreateTransacao = async (trancasao: TransacaoModel) => {
     try {
-      const result = await createTransacao(trancasao);
-      if (result && result.success) showSucessoOperacao();
-      else showErroOperacao();
+      const result = await apiTransacao.createTransacao(trancasao);
+      showMessageResponse(result);
     } catch (error) {
       showErroOperacao();
     }
@@ -58,9 +51,8 @@ const Transacao: React.FC = () => {
 
   const handleUpdateTransacao = async (trancasao: TransacaoModel) => {
     try {
-      const result = await updateTransacao(trancasao);
-      if (result && result.success) showSucessoOperacao();
-      else showErroOperacao();
+      const result = await apiTransacao.updateTransacao(trancasao);
+      showMessageResponse(result);
     } catch (error) {
       showErroOperacao();
     }
@@ -68,18 +60,17 @@ const Transacao: React.FC = () => {
 
   const handleDisableEnableTransacao = async (trancasao: TransacaoModel) => {
     try {
-      const result = await removeTransacao(trancasao);
-      if (result && result.success) showSucessoOperacao();
-      else showErroOperacao();
+      const result = await apiTransacao.removeTransacao(trancasao);
+      showMessageResponse(result);
     } catch (error) {
       showErroOperacao();
     }
   };
 
-  const showErroOperacao = () => {
+  const showErroOperacao = (message?: string) => {
     openNotification(
       "Ops...",
-      "Ocorreu um erro ao realizar a sua operação.",
+      message ?? "Ocorreu um erro ao realizar a sua operação.",
       "error"
     );
   };
@@ -90,6 +81,11 @@ const Transacao: React.FC = () => {
       "Sua operação foi realizada com sucesso.",
       "success"
     );
+  };
+
+  const showMessageResponse = (response: ResponseBase<any>) => {
+    if (response.success) showSucessoOperacao();
+    else showErroOperacao(response?.message);
   };
 
   const columns: ColumnsType<TransacaoModel> = [
@@ -143,13 +139,18 @@ const Transacao: React.FC = () => {
       width: "25%",
       render: (text, record) => (
         <Flex wrap gap="small">
-          <Button type="primary" onClick={() => handleEdit(record, "Update")}>
+          <Button
+            icon={<EditOutlined />}
+            type="primary"
+            onClick={() => handleEdit(record, EModalAction.Update)}
+          >
             Alterar
           </Button>
           <Button
+            icon={<DeleteOutlined />}
             danger
             type="primary"
-            onClick={() => handleEdit(record, "Delete")}
+            onClick={() => handleEdit(record, EModalAction.Delete)}
           >
             Excluir
           </Button>
@@ -165,7 +166,7 @@ const Transacao: React.FC = () => {
   };
 
   const handleAdd = () => {
-    setModalAction("Create");
+    setModalAction(EModalAction.Create);
     setEditingRecord({} as TransacaoModel);
     setIsModalVisible(true);
   };
@@ -178,9 +179,11 @@ const Transacao: React.FC = () => {
 
   const handleConfirm = (updatedRecord: TransacaoModel) => {
     console.log({ updatedRecord });
-    if (modalAction === "Create") handleCreateTransacao(updatedRecord);
-    else if (modalAction === "Update") handleUpdateTransacao(updatedRecord);
-    else if (modalAction === "Delete")
+    if (modalAction === EModalAction.Create)
+      handleCreateTransacao(updatedRecord);
+    else if (modalAction === EModalAction.Update)
+      handleUpdateTransacao(updatedRecord);
+    else if (modalAction === EModalAction.Delete)
       handleDisableEnableTransacao(updatedRecord);
 
     setIsModalVisible(false);
@@ -202,12 +205,26 @@ const Transacao: React.FC = () => {
     });
   };
 
+  const handleTableChange = (newPagination: TablePaginationConfig) => {
+    setPagination(newPagination);
+  };
+
   return (
     <>
       {contextHolder}
-      <Button type="primary" onClick={handleAdd}>
-        Adicionar
-      </Button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "16px",
+        }}
+      >
+        <div>{/* Outros elementos à esquerda, se houver */}</div>
+        <Button type="primary" icon={<PlusOutlined />}>
+          Novo
+        </Button>
+      </div>
       {editingRecord && (
         <EditModal
           visible={isModalVisible}
@@ -220,7 +237,12 @@ const Transacao: React.FC = () => {
       {loading ? (
         <Skeleton active />
       ) : (
-        <Table columns={columns} dataSource={data} />
+        <Table
+          pagination={pagination}
+          onChange={handleTableChange}
+          columns={columns}
+          dataSource={data}
+        />
       )}
     </>
   );

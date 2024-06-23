@@ -1,1 +1,5 @@
-export type EModalAction = "Update" | "Create" | "Delete";
+export enum EModalAction {
+  Create,
+  Update,
+  Delete,
+}

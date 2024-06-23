@@ -40,29 +40,17 @@ namespace MyFinanceWeb.Domain.Models
             this.Ativo = !this.Ativo;
         }
 
-        public void CreateObject()
+        public void CreateObject(char? tipo = null)
         {
-            if (Tipo.IsEqualTo("R"))
-            {
-                CorTag = "volcano";
-                Tipo = "Receita";
-            }
-            else if (Tipo.IsEqualTo("D"))
+            var tipoTransacao = tipo ?? Tipo[0] ;
+            if (tipoTransacao.ToString().IsEqualTo("R"))
             {
                 CorTag = "green";
-                Tipo = "Despesa";
-            }
-        }
-        private void CreateObject(char tipo)
-        {
-            if (tipo.ToString().IsEqualTo("R"))
-            {
-                CorTag = "volcano";
                 Tipo = "Receita";
             }
-            else if (tipo.ToString().IsEqualTo("D"))
+            else if (tipoTransacao.ToString().IsEqualTo("D"))
             {
-                CorTag = "green";
+                CorTag = "volcano";
                 Tipo = "Despesa";
             }
         }

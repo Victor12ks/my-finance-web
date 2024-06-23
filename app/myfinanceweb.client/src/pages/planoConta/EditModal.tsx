@@ -34,7 +34,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   return (
     <>
-      {action === "Delete" ? (
+      {action === EModalAction.Delete ? (
         <Modal
           title={initialValues.ativo ? "Desativar" : "Ativar"}
           open={visible}
