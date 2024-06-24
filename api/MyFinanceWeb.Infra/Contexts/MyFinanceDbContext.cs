@@ -7,7 +7,6 @@ namespace MyFinanceWeb.Infra.Contexts
     {
         public MyFinanceDbContext(DbContextOptions<MyFinanceDbContext> options) : base(options) { }
 
-
         public DbSet<PlanoConta> PlanoConta { get; set; }
         public DbSet<Transacao> Transacao { get; set; }
 

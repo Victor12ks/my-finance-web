@@ -1,14 +1,6 @@
-using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using MyFinanceWeb.Application.Applications;
-using MyFinanceWeb.Application.Services;
-using MyFinanceWeb.Domain.Interfaces.Applications;
-using MyFinanceWeb.Domain.Interfaces.Repositories;
-using MyFinanceWeb.Domain.Interfaces.Services;
-using MyFinanceWeb.Domain.Validations;
 using MyFinanceWeb.Infra.Contexts;
-using MyFinanceWeb.Infra.Repositories;
-using System;
+using MyFinanceWeb.Server.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,21 +11,13 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<MyFinanceDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
-            maxRetryCount: 5, // Número máximo de tentativas
-            maxRetryDelay: TimeSpan.FromSeconds(30), // Atraso máximo entre tentativas
-            errorNumbersToAdd: null) // Lista opcional de números de erro adicionais para incluir no comportamento de repetição
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null)
     ).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
 );
 
-builder.Services.AddControllers()
-    .AddFluentValidation(config => config.RegisterValidatorsFromAssemblyContaining<PlanoContaValidator>());
-
-builder.Services.AddScoped<IPlanoContaRepository, PlanoContaRepository>();
-builder.Services.AddScoped<IPlanoContaService, PlanoContaService>();
-builder.Services.AddScoped<ITransacaoService, TransacaoService>();
-builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
-builder.Services.AddScoped<IPlanoContaApplication, PlanoContaApplication>();
-builder.Services.AddScoped<ITransacaoApplication, TransacaoApplication>();
+ServiceExtensions.ConfigureServices(builder.Services);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

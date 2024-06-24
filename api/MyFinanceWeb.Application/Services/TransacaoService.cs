@@ -2,6 +2,7 @@
 using MyFinanceWeb.Domain.Interfaces.Repositories;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
+using MyFinanceWeb.Domain.Utils;
 
 namespace MyFinanceWeb.Application.Services
 {
@@ -68,6 +69,125 @@ namespace MyFinanceWeb.Application.Services
             {
                 _logger.LogError(ex?.Message + ex?.StackTrace);
                 throw;
+            }
+        }
+
+        public List<DataChart> GetTransacoesByData(DateTime dataInicio, DateTime dataFim)
+        {
+            try
+            {
+                var transacoes = _repository.GetTransacoesByData(dataInicio, dataFim);
+
+                var transacoesPorMes = transacoes
+                .GroupBy(t => new { t.Data.Year, t.Data.Month })
+                .Select(g => new
+                {
+                    Ano = g.Key.Year,
+                    Mes = g.Key.Month,
+                    TotalValor = g.Sum(t => t.Valor),
+                    Transacoes = g.ToList()
+                })
+                .OrderBy(g => g.Ano)
+                .ThenBy(g => g.Mes)
+                .ToList();
+
+                var result = new List<DataChart>();
+                transacoesPorMes.ForEach(transacao =>
+                {
+                    result.Add(new DataChart($"{transacao.Mes}/{transacao.Ano}", transacao.TotalValor.ToString()));
+                });
+
+                return result;
+            }
+            catch
+            {
+                return [];
+            }
+        }
+
+        public List<DataChart> GetTransacoesByTipo(DateTime dataInicio, DateTime dataFim)
+        {
+            try
+            {
+                var transacoes = _repository.GetTransacoesByData(dataInicio, dataFim);
+                var transacoesTipo = transacoes
+               .GroupBy(t => t.PlanoConta.Tipo)
+                .Select(g => new
+                {
+                    TipoPlanoConta = g.Key,
+                    TotalValor = g.Sum(t => t.Valor)
+                })
+                .ToList();
+
+                var result = new List<DataChart>();
+
+                transacoesTipo.ForEach(transacao =>
+                {
+                    var tipo = transacao.TipoPlanoConta == 'R' ? "Receita" : "Despesa";
+                    result.Add(new DataChart(tipo, transacao.TotalValor.ToString()));
+                });
+
+                return result;
+            }
+            catch
+            {
+                return [];
+            }
+        }
+
+        public List<DataChart> GetTransacoesByTipoConta(char tipo, DateTime dataInicio, DateTime dataFim)
+        {
+            try
+            {
+                var transacoes = _repository.GetTransacoesByData(dataInicio, dataFim);
+                var transacoesTipo = transacoes
+                .Where(t => t.PlanoConta.Tipo.Equals(tipo))
+                .GroupBy(t => new { t.PlanoConta.Descricao, t.PlanoConta.Tipo })
+                .Select(g => new
+                {
+                    g.Key.Descricao,
+                    g.Key.Tipo,
+                    TotalValor = g.Sum(t => t.Valor)
+                })
+                .OrderByDescending(g => g.TotalValor)
+                .ToList();
+
+                var result = new List<DataChart>();
+
+                transacoesTipo.ForEach(transacao =>
+                {
+                    result.Add(new DataChart(transacao.Descricao, transacao.TotalValor.ToString()));
+                });
+
+                return result;
+            }
+            catch
+            {
+                return [];
+            }
+        }
+
+        public (string Mes, string Valor)? GetMaiorValorByTipo(DateTime dataInicio, DateTime dataFim)
+        {
+            try
+            {
+                var transacoes = _repository.GetTransacoesByData(dataInicio, dataFim);
+
+                var result = transacoes
+                .GroupBy(t => t.PlanoConta.Tipo)
+                .Select(g => new
+                {
+                    Tipo = g.Key,
+                    TotalValor = g.Sum(t => t.Valor)
+                })
+                .OrderByDescending(g => g.TotalValor)
+                .FirstOrDefault();
+
+                return (result.Tipo.ToString(), result.TotalValor.ToString());
+            }
+            catch
+            {
+                return null;
             }
         }
 

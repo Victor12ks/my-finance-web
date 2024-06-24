@@ -8,6 +8,7 @@ import {
 import { Content, Footer, Header } from "antd/es/layout/layout";
 import Transacao from "../transacao/Index";
 import PlanoConta from "../planoConta/Index";
+import Dashboard from "../dashboard/Index";
 
 const Home: React.FC = () => {
   const [selectedKey, setSelectedKey] = useState("1");
@@ -23,7 +24,7 @@ const Home: React.FC = () => {
       case "2":
         return <PlanoConta />;
       case "3":
-        return <div>Dashboard Content</div>;
+        return <Dashboard />;
       default:
         return null;
     }
