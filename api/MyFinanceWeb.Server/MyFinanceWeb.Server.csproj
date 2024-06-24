@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyFinanceWeb.Application\MyFinanceWeb.Application.csproj" />
-    <ProjectReference Include="..\app\myfinanceweb.client\myfinanceweb.client.esproj">
+    <ProjectReference Include="..\..\app\myfinanceweb.client\myfinanceweb.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\MyFinanceWeb.Infra\MyFinanceWeb.Infra.csproj" />
