@@ -62,7 +62,7 @@ A aplicação está configurada para executar nas seguintes portas https://local
 
 - Banco de dados foi criado em Sql Server
 
-O script de execução do banco de dados está no repositório
+O script de execução do banco de dados está na pasta raiz desse repositório
 
 Caso necessite alterar a connection string vá até o arquivo: ..\api\MyFinanceWeb.Server\appsettings.json
 
