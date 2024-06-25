@@ -2,6 +2,7 @@
 using MyFinanceWeb.Domain.Dtos;
 using MyFinanceWeb.Domain.Interfaces.Repositories;
 using MyFinanceWeb.Infra.Contexts;
+using System;
 
 namespace MyFinanceWeb.Infra.Repositories
 {
@@ -21,6 +22,11 @@ namespace MyFinanceWeb.Infra.Repositories
         public PlanoConta? GetById(int id)
         {
             return _dbContext.PlanoConta.AsNoTracking().First(x => x.Id == id);
+        }
+
+        public bool HasAnyPlanoConta()
+        {
+            return _dbContext.PlanoConta.Any();
         }
 
         public bool Add(PlanoConta planoConta)

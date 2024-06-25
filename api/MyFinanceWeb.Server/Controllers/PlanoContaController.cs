@@ -34,6 +34,12 @@ namespace MyFinanceWeb.Server.Controllers
             return Ok(_application.Update(modal));
         }
 
+        [HttpGet("has-plano-conta")]
+        public IActionResult HasAnyPlanoConta()
+        {
+            return Ok(_application.HasAnyPlanoConta());
+        }
+
         [HttpPut("disable-enable")]
         public IActionResult DisableEnable(PlanoContaModel modal)
         {

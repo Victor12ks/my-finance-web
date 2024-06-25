@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Button, Skeleton, Table, Tag, Flex, notification } from "antd";
+import { Button, Skeleton, Table, Tag, Flex, notification, Alert } from "antd";
 import { TransacaoModel } from "../../types/transacao";
 import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import EditModal from "./EditModal";
@@ -9,11 +9,13 @@ import { IconType } from "antd/es/notification/interface";
 import moment from "moment";
 import { ResponseBase } from "../../types/reponse";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { hasAnyPlanoConta } from "../../api/planoContaApi";
 
 const Transacao: React.FC = () => {
   const [data, setData] = useState<TransacaoModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalAction, setModalAction] = useState<EModalAction>();
+  const [hasPlanoConta, setHasPlanoConta] = useState(true);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [pagination, setPagination] = useState<TablePaginationConfig>({
@@ -38,7 +40,19 @@ const Transacao: React.FC = () => {
     }
   }, []);
 
+  const fetchPlanoConta = useCallback(async () => {
+    try {
+      const anyPlanoConta = await hasAnyPlanoConta();
+      if (anyPlanoConta) setHasPlanoConta(anyPlanoConta.data as boolean);
+    } catch (error) {
+      showErroOperacao();
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
+    fetchPlanoConta();
     fetchTransacoes();
   }, []);
 
@@ -213,6 +227,15 @@ const Transacao: React.FC = () => {
 
   return (
     <>
+      {!hasPlanoConta && (
+        <Alert
+          showIcon
+          message="Atenção"
+          description="Vi aqui que você ainda não cadastrou nenhum tipo de transação :( faça o cadastro no menu acima (Tipo Transações) para começar lançar suas transações."
+          type="warning"
+        />
+      )}
+      <br></br>
       {contextHolder}
       <div
         style={{
@@ -223,7 +246,14 @@ const Transacao: React.FC = () => {
         }}
       >
         <div>{}</div>
-        <Button type="primary" onClick={handleAdd} icon={<PlusOutlined />}>
+
+        <Button
+          size="large"
+          type="primary"
+          disabled={!hasPlanoConta}
+          onClick={handleAdd}
+          icon={<PlusOutlined />}
+        >
           Novo
         </Button>
       </div>

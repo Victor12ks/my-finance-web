@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using MyFinanceWeb.Domain.Constants;
 using MyFinanceWeb.Domain.Core;
+using MyFinanceWeb.Domain.Dtos;
 using MyFinanceWeb.Domain.Interfaces.Applications;
 using MyFinanceWeb.Domain.Interfaces.Services;
 using MyFinanceWeb.Domain.Models;
@@ -73,9 +74,9 @@ namespace MyFinanceWeb.Application.Applications
 
                 planoConta.DisableEnable();
 
-                var result = Update(planoConta);
+                var result = _service.Update(planoConta);
 
-                if (result.Success)
+                if (result is not null)
                     return new Response<PlanoContaModel>(planoConta);
 
                 return new Response<PlanoContaModel>("Não foi atualizar esse tipo de transação.");
@@ -84,6 +85,19 @@ namespace MyFinanceWeb.Application.Applications
             {
                 _logger.LogError(message: ex.Message);
                 return new Response<PlanoContaModel>(Message.Error.DEFAULT_ERROR);
+            }
+        }
+
+        public Response<bool> HasAnyPlanoConta()
+        {
+            try
+            {
+                return new Response<bool>(_service.HasAnyPlanoConta());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(message: ex.Message);
+                return new Response<bool>(Message.Error.DEFAULT_ERROR);
             }
         }
     }

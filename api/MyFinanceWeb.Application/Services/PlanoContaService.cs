@@ -56,6 +56,11 @@ namespace MyFinanceWeb.Application.Services
             }
         }
 
+        public bool HasAnyPlanoConta()
+        {
+            return _repository.HasAnyPlanoConta();
+        }
+
         public bool HasPlanoConta(int id)
         {
             try

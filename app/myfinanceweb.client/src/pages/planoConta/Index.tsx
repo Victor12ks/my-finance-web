@@ -213,7 +213,12 @@ const PlanoConta: React.FC = () => {
         }}
       >
         <div>{}</div>
-        <Button type="primary" onClick={handleAdd} icon={<PlusOutlined />}>
+        <Button
+          size="large"
+          type="primary"
+          onClick={handleAdd}
+          icon={<PlusOutlined />}
+        >
           Novo
         </Button>
       </div>

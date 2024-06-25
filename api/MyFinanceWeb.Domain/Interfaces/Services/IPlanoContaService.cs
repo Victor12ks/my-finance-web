@@ -9,5 +9,6 @@ namespace MyFinanceWeb.Domain.Interfaces.Services
         bool HasPlanoConta(int id);
         PlanoContaModel? Add(PlanoContaModel planoConta);
         PlanoContaModel? Update(PlanoContaModel planoConta);
+        bool HasAnyPlanoConta();
     }
 }

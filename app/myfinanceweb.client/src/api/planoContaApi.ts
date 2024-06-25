@@ -22,6 +22,24 @@ export const createPlanoConta = async (
   }
 };
 
+export const hasAnyPlanoConta = async (): Promise<ResponseBase<boolean>> => {
+  const action = "has-plano-conta";
+  try {
+    const response: AxiosResponse<ResponseBase<boolean>> = await axios.get(
+      `${API_URL}/${action}`
+    );
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error:", error.message);
+      throw new Error(error.message);
+    } else {
+      console.error("Unexpected error:", error);
+      throw new Error("Unexpected error occurred");
+    }
+  }
+};
+
 export const getPlanosConta = async (): Promise<
   ResponseBase<PlanoContaModel[]>
 > => {
