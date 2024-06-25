@@ -15,7 +15,7 @@ go
 create table Transacao(
     id int not null identity(1,1),
     historico varchar(50),
-    data datetime not null,
+    dataHora datetime not null,
     valor decimal(9,2) not null,
     planocontaid int not null,
     primary key(id),
