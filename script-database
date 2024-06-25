@@ -8,7 +8,7 @@ create table PlanoConta(
     id int not null identity(1,1),
     descricao varchar(50) not null,
     tipo char(1) not null,
-    ativo bit not null,
+    ativo bit not NULL,
     primary key(id)
 );
 go
@@ -21,3 +21,4 @@ create table Transacao(
     primary key(id),
     foreign key (planocontaid) references PlanoConta(id)
 );
+
