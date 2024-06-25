@@ -1,6 +1,8 @@
 # MyFinanceWeb
 
-Este é um projeto para o trabalho final da disciplina de PRÁTICAS DE IMPLEMENTAÇÃO E EVOLUÇÃO DE SOFTWARE - Online - ESFW - O6 - T1 que utiliza React com Vite para o frontend e ASP.NET Core 8 para o backend
+Este é um projeto para o trabalho final da disciplina de PRÁTICAS DE IMPLEMENTAÇÃO E EVOLUÇÃO DE SOFTWARE - Online - ESFW - O6 - T1 que utiliza React com Vite para o frontend e ASP.NET Core 8 para o backend.
+Esse projeto Foi criado a partir do template disponibilizado pelo visual studio que engloba o front-end e o back-end na mesma solução, apenas tive que reorganizar as pastas.
+O banco de dados da aplicação foi criado em SQL Server.
 
 ## Pré-requisitos
 
@@ -61,8 +63,6 @@ MyFinanceWeb
 A aplicação está configurada para executar nas seguintes portas https://localhost:7293 e http://localhost:5139
 
 ## Banco de dados
-
-- Banco de dados foi criado em Sql Server
 
 O script de execução do banco de dados está na pasta raiz desse repositório
 
