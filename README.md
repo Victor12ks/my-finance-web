@@ -54,6 +54,8 @@ MyFinanceWeb
    dotnet run dev
    ```
 
+### Uma alternativa para execução é carregar a solution no Visual Studio, realizar um build, Configurar a solution para realizar o start com 2 projetos diferentes (.MyFinanceWeb.Server e myfinanceweb.client) e iniciar a execução
+
 ## Execução
 
 A aplicação está configurada para executar nas seguintes portas https://localhost:7293 e http://localhost:5139
