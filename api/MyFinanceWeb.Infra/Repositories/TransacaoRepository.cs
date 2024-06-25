@@ -46,45 +46,14 @@ namespace MyFinanceWeb.Infra.Repositories
             var result = _dbContext.SaveChanges();
             return result > 0;
         }
-
-        //public List<DataChart> GetTransacoesByTipoConta(DateTime startDate, DateTime endDate)
-        //{
-        //    var resultados = _dbContext.Transacao
-        //        .Where(t => t.Data >= startDate && t.Data <= endDate)
-        //        .GroupBy(t => new { t.PlanoConta.Id, t.PlanoConta.Descricao })
-        //        .Select(g => new DataChart()
-        //        {
-        //            Descricao = g.Key.Descricao,
-        //            Valor = g.Count().ToString(),
-        //        })
-        //        .ToList();
-
-        //    return resultados;
-        //}
-
-        //public List<DataChart> GetTransacoesByTipo(DateTime startDate, DateTime endDate)
-        //{
-        //    var resultados = _dbContext.Transacao
-        //        .Where(t => t.Data >= startDate && t.Data <= endDate)
-        //        .GroupBy(t => t.PlanoConta.Tipo)
-        //        .Select(g => new DataChart()
-        //        {
-        //            Descricao = g.Key.ToString(),
-        //            Valor = g.Count().ToString()
-        //        })
-        //        .ToList();
-
-        //    return resultados;
-        //}
-
         public List<Transacao> GetTransacoesByData(DateTime startDate, DateTime endDate)
         {
             var resultados = _dbContext.Transacao
-                .Where(t => t.Data >= startDate && t.Data <= endDate)
+                .Where(t => t.DataHora >= startDate && t.DataHora <= endDate)
                 .Include(t => t.PlanoConta)
                 .Select(g => new Transacao()
                 {
-                    Data = g.Data,
+                    DataHora = g.DataHora,
                     Valor = g.Valor,
                     Id = g.Id,
                     PlanoConta = g.PlanoConta,

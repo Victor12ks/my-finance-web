@@ -11,7 +11,7 @@ namespace MyFinanceWeb.Infra.Repositories
         public List<DataChart> GetTransacoesPorTipo(DateTime startDate, DateTime endDate)
         {
             var resultados = _dbContext.Transacao
-                .Where(t => t.Data >= startDate && t.Data <= endDate)
+                .Where(t => t.DataHora >= startDate && t.DataHora <= endDate)
                 .GroupBy(t => new { t.PlanoConta.Id, t.PlanoConta.Descricao })
                 .Select(g => new DataChart()
                 {

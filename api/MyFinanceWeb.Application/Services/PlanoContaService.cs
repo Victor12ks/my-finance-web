@@ -18,7 +18,7 @@ namespace MyFinanceWeb.Application.Services
         {
             try
             {
-                var planoConta = _repository.Add(planoContaModel.CastModalToDto());
+                var planoConta = _repository.Add(planoContaModel.CastModalToDto(true));
 
                 if (planoConta)
                     return planoContaModel;
@@ -74,7 +74,7 @@ namespace MyFinanceWeb.Application.Services
             try
             {
 
-                var sucess = _repository.Update(planoContaModel.CastModalToDto());
+                var sucess = _repository.Update(planoContaModel.CastModalToDto(null));
 
                 if (sucess)
                     return planoContaModel;

@@ -79,7 +79,7 @@ namespace MyFinanceWeb.Application.Services
                 var transacoes = _repository.GetTransacoesByData(dataInicio, dataFim);
 
                 var transacoesPorMes = transacoes
-                .GroupBy(t => new { t.Data.Year, t.Data.Month })
+                .GroupBy(t => new { t.DataHora.Year, t.DataHora.Month })
                 .Select(g => new
                 {
                     Ano = g.Key.Year,

@@ -4,7 +4,7 @@
     {
         public int Id { get; init; }
         public string Historico { get; init; }
-        public DateTime Data { get; init; }
+        public DateTime DataHora { get; init; }
         public decimal Valor { get; init; }
         public int PlanoContaId { get; init; }
         public virtual PlanoConta? PlanoConta { get; init; }

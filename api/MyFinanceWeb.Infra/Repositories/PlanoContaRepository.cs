@@ -31,8 +31,7 @@ namespace MyFinanceWeb.Infra.Repositories
 
         public bool Update(PlanoConta planoConta)
         {
-            _dbContext.PlanoConta.Attach(planoConta);
-            _dbContext.Entry(planoConta);
+            _dbContext.PlanoConta.Update(planoConta);
             return _dbContext.SaveChanges() > 0;
         }
     }

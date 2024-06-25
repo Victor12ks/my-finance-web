@@ -27,7 +27,7 @@ namespace MyFinanceWeb.Domain.Models
             {
                 Id = Codigo ?? 0,
                 Historico = this.Historico,
-                Data = DateTime.Parse(DataHora),
+                DataHora = DateTime.Parse(DataHora),
                 Valor = Valor,
                 PlanoContaId = PlanoContaId ?? 0
             };
@@ -35,7 +35,7 @@ namespace MyFinanceWeb.Domain.Models
         public void CastDtoToModal(Transacao transacao)
         {
             Historico = transacao.Historico;
-            DataHora = transacao.Data.ToString("yyyy-MM-dd HH:mm:ss");
+            DataHora = transacao.DataHora.ToString("yyyy-MM-dd HH:mm:ss");
             Valor = transacao.Valor;
             PlanoContaId = transacao.PlanoContaId;
             Codigo = transacao.Id;

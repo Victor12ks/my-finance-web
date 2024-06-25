@@ -24,14 +24,14 @@ namespace MyFinanceWeb.Domain.Models
         public string Tipo { get; set; }
         public string? CorTag { get; set; }
 
-        public PlanoConta CastModalToDto()
+        public PlanoConta CastModalToDto(bool? ativo)
         {
             return new()
             {
                 Id = this.Id,
                 Descricao = this.Descricao,
                 Tipo = this.Tipo[0],
-                Ativo = this.Ativo
+                Ativo = ativo ?? this.Ativo
             };
         }
 
