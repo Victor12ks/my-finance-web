@@ -49,7 +49,7 @@ namespace MyFinanceWeb.Infra.Repositories
         public List<Transacao> GetTransacoesByData(DateTime startDate, DateTime endDate)
         {
             var resultados = _dbContext.Transacao
-                .Where(t => t.DataHora >= startDate && t.DataHora <= endDate)
+                .Where(t => t.DataHora.Date >= startDate.Date && t.DataHora.Date <= endDate.Date)
                 .Include(t => t.PlanoConta)
                 .Select(g => new Transacao()
                 {
