@@ -72,13 +72,14 @@ namespace MyFinanceWeb.Application.Services
             }
         }
 
-        public List<DataChart> GetTransacoesByData(DateTime dataInicio, DateTime dataFim)
+        public List<DataChart> GetTransacoesByData(char tipo, DateTime dataInicio, DateTime dataFim)
         {
             try
             {
                 var transacoes = _repository.GetTransacoesByData(dataInicio, dataFim);
 
                 var transacoesPorMes = transacoes
+                .Where(t => t.PlanoConta.Tipo.Equals(tipo))
                 .GroupBy(t => new { t.DataHora.Year, t.DataHora.Month })
                 .Select(g => new
                 {

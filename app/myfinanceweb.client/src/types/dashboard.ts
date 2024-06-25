@@ -2,7 +2,8 @@ export interface DashboardModel {
   transacoesTipo: DataChart[];
   transacoesTipoContaDespesa: DataChart[];
   transacoesTipoContaReceita: DataChart[];
-  transacoesMes: DataChart[];
+  despesasPorMes: DataChart[];
+  receitasPorMes: DataChart[];
   maiorDespesa: DataChart;
   maiorReceita: DataChart;
 }

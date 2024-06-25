@@ -12,7 +12,8 @@ const Dashboard = () => {
     useState<any>([]);
   const [transacoesTipoContaReceita, setTransacoesTipoContaReceita] =
     useState<any>([]);
-  const [transacoesMes, setTransacoesMes] = useState<any>([]);
+  const [despesasMes, setDespesasMes] = useState<any>([]);
+  const [receitasMes, setReceitasMes] = useState<any>([]);
   const [datasConsulta, setDatasConsulta] = useState<{
     dataInicial: string;
     dataFinal: string;
@@ -33,7 +34,6 @@ const Dashboard = () => {
     dados?.forEach((item: any) => {
       dadosFormatados.push([item.descricao, parseFloat(item.valor)]);
     });
-    console.log({ dadosFormatados });
     setTransacoesTipo(dadosFormatados);
   };
 
@@ -42,7 +42,6 @@ const Dashboard = () => {
     dados?.forEach((item: any) => {
       dadosFormatados.push([item.descricao, parseFloat(item.valor)]);
     });
-    console.log({ dadosFormatados });
     setTransacoesTipoContaDespesa(dadosFormatados);
   };
 
@@ -51,17 +50,23 @@ const Dashboard = () => {
     dados?.forEach((item: any) => {
       dadosFormatados.push([item.descricao, parseFloat(item.valor)]);
     });
-    console.log({ dadosFormatados });
     setTransacoesTipoContaReceita(dadosFormatados);
   };
 
-  const setDadosTransacoesMes = (dados: DataChart[]) => {
+  const setDadosReceitasMes = (dados: DataChart[]) => {
     const dadosFormatados = [["Mês/Ano", "Valor em R$"]];
     dados?.forEach((item: any) => {
       dadosFormatados.push([item.descricao, parseFloat(item.valor)]);
     });
-    console.log({ dadosFormatados });
-    setTransacoesMes(dadosFormatados);
+    setReceitasMes(dadosFormatados);
+  };
+
+  const setDadosDespesasMes = (dados: DataChart[]) => {
+    const dadosFormatados = [["Mês/Ano", "Valor em R$"]];
+    dados?.forEach((item: any) => {
+      dadosFormatados.push([item.descricao, parseFloat(item.valor)]);
+    });
+    setDespesasMes(dadosFormatados);
   };
 
   useEffect(() => {
@@ -76,7 +81,8 @@ const Dashboard = () => {
           datasConsulta.dataFinal
         );
         if (result && result.data) {
-          setDadosTransacoesMes(result.data.transacoesMes);
+          setDadosDespesasMes(result.data.despesasPorMes);
+          setDadosReceitasMes(result.data.receitasPorMes);
           setDadosTransacoesTipo(result.data.transacoesTipo);
           setDadosTransacoesTipoContaReceita(
             result.data.transacoesTipoContaReceita
@@ -217,11 +223,33 @@ const Dashboard = () => {
             height={"400px"}
             chartType="Bar"
             loader={<div>Carregando Gráfico...</div>}
-            data={transacoesMes}
+            data={receitasMes}
             options={{
               is3D: true,
               colors: getColors(),
-              title: "Transações por mês",
+              title: "Receitas por mês",
+              chartArea: { width: "50%" },
+              hAxis: {
+                title: "Valor das Transações",
+                minValue: 0,
+              },
+              vAxis: {
+                title: "Mês/Ano",
+              },
+            }}
+          />
+        </Col>
+        <Col span={12}>
+          <Chart
+            width={"100%"}
+            height={"400px"}
+            chartType="Bar"
+            loader={<div>Carregando Gráfico...</div>}
+            data={despesasMes}
+            options={{
+              is3D: true,
+              colors: getColors(),
+              title: "Despesas por mês",
               chartArea: { width: "50%" },
               hAxis: {
                 title: "Valor das Transações",

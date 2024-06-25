@@ -13,14 +13,16 @@ namespace MyFinanceWeb.Application.Applications
         {
             try
             {
-                var gastosPorMes = _transacaoService.GetTransacoesByData(dataInicio, dataFim);
+                var receitaPorMes = _transacaoService.GetTransacoesByData('R', dataInicio, dataFim);
+                var despesasPorMes = _transacaoService.GetTransacoesByData('D', dataInicio, dataFim);
                 var agrupamentoPorTipo = _transacaoService.GetTransacoesByTipo(dataInicio, dataFim);
                 var agrupamentoReceitas = _transacaoService.GetTransacoesByTipoConta('R', dataInicio, dataFim);
                 var agrupamentoDespesas = _transacaoService.GetTransacoesByTipoConta('D', dataInicio, dataFim);
 
                 var result = new DashboardModel()
                 {
-                    TransacoesMes = gastosPorMes,
+                    ReceitasPorMes = receitaPorMes,
+                    DespesasPorMes = despesasPorMes,
                     TransacoesTipo = agrupamentoPorTipo,
                     TransacoesTipoContaDespesa = agrupamentoDespesas,
                     TransacoesTipoContaReceita = agrupamentoReceitas

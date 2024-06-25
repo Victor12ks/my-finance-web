@@ -5,7 +5,8 @@
         public List<DataChart> TransacoesTipo { get; set; }
         public List<DataChart> TransacoesTipoContaDespesa { get; set; }
         public List<DataChart> TransacoesTipoContaReceita { get; set; }
-        public List<DataChart> TransacoesMes { get; set; }
+        public List<DataChart> DespesasPorMes { get; set; }
+        public List<DataChart> ReceitasPorMes { get; set; }
         public DataChart MaiorDespesa { get; set; }
         public DataChart MaiorReceita { get; set; }
 

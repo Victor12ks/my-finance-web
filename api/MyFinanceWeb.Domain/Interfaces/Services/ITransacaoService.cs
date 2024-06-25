@@ -11,7 +11,7 @@ namespace MyFinanceWeb.Domain.Interfaces.Services
         bool HasTransacao(int id);
         TransacaoModel? Add(TransacaoModel transacaoModel);
         TransacaoModel? Update(TransacaoModel transacaoModel);
-        public List<DataChart> GetTransacoesByData(DateTime dataInicio, DateTime dataFim);
+        public List<DataChart> GetTransacoesByData(char tipo, DateTime dataInicio, DateTime dataFim);
 
         public List<DataChart> GetTransacoesByTipo(DateTime dataInicio, DateTime dataFim);
 
